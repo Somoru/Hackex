@@ -104,7 +104,7 @@ router.post("/verify-otp", async (req, res) => {
       isVerified: true,
     });
 
-    sendWelcomeEmail(email);
+    sendWelcomeEmail(email, username);
 
     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
