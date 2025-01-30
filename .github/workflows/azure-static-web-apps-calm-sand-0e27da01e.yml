@@ -24,25 +24,30 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20 # ✅ Ensure Node.js 20+ is used
+          node-version: 20 # ✅ Ensure correct Node.js version
           cache: npm
-          cache-dependency-path: frontend/package-lock.json # ✅ Cache dependencies
+          cache-dependency-path: frontend/package-lock.json # ✅ Cache dependencies for frontend
 
       - name: Install Dependencies
         run: |
-          cd frontend # ✅ Change to frontend directory
+          cd frontend # ✅ Ensure we are inside the correct directory
           npm install
 
       - name: Build Project
         run: |
-          cd frontend # ✅ Ensure we are in frontend folder
+          cd frontend # ✅ Ensure we are inside the correct directory
           npm run build
+
+      - name: Verify Build Output
+        run: |
+          ls -la frontend/dist # ✅ Check if build was successful
+          ls -la frontend # ✅ Confirm frontend directory structure
 
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }} # ✅ Ensure token is used
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           ###### Repository/Build Configurations ######
@@ -60,5 +65,5 @@ jobs:
         id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }} # ✅ Ensure token is used
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: "close"
