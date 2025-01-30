@@ -2,7 +2,7 @@ export const checkUsernameExists = async (username) => {
   try {
     console.log("🔍 Checking username availability:", username);
 
-    const response = await fetch(`http://localhost:5000/api/auth/check-username?username=${username}`);
+    const response = await fetch(`http://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/check-username?username=${username}`);
     const data = await response.json();
 
     console.log("✅ Username check response:", data);
@@ -19,7 +19,7 @@ export const requestOTP = async (username, email, password) => {
   try {
     console.log("🔍 Sending OTP request with data:", { username, email, password });
 
-    const response = await fetch("http://localhost:5000/api/auth/signup", {
+    const response = await fetch("http://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, email, password }),
@@ -41,7 +41,7 @@ export const resendOTP = async (email) => {
   try {
     console.log("🔍 Resending OTP for:", email);
 
-    const response = await fetch("http://localhost:5000/api/auth/resend-otp", {
+    const response = await fetch("http://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/resend-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -63,7 +63,7 @@ export const verifyOTP = async (email, otp, username, password) => {
   try {
     console.log("🔍 Sending OTP Verification Request:", { email, otp, username, password });
 
-    const response = await fetch("http://localhost:5000/api/auth/verify-otp", {
+    const response = await fetch("http://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, otp, username, password }),
@@ -87,7 +87,7 @@ export const getUserStatus = async () => {
 
     console.log("🔍 Fetching user status...");
 
-    const response = await fetch("http://localhost:5000/api/auth/user-status", {
+    const response = await fetch("http://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status", {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -107,7 +107,7 @@ export const loginUser = async (email, password) => {
   try {
     console.log("🔍 Sending Login Request:", { email, password });
 
-    const response = await fetch("http://localhost:5000/api/auth/login", {
+    const response = await fetch("http://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),

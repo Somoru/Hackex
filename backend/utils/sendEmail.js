@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
 
 dotenv.config();
 
@@ -13,13 +15,30 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Function to read and format HTML email templates
+const getEmailTemplate = (filename, replacements) => {
+  try {
+    let template = fs.readFileSync(path.resolve(`./emails/${filename}`), "utf8");
+    Object.keys(replacements).forEach((key) => {
+      template = template.replace(new RegExp(`{{${key}}}`, "g"), replacements[key]);
+    });
+    return template;
+  } catch (error) {
+    console.error(`❌ Error reading email template: ${filename}`, error);
+    return "<p>Error loading email template.</p>";
+  }
+};
+
+// ✅ Send OTP Email (Styled HTML)
 export const sendOTP = async (email, otp) => {
   try {
+    const htmlContent = getEmailTemplate("otp-email.html", { OTP: otp });
+
     await transporter.sendMail({
-      from: `"HackEx Team" <${process.env.SMTP_USER}>`, // Set "From" email
+      from: `"HackEx Team" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: "Your OTP for HackEx",
-      text: `Your OTP is ${otp}. It is valid for 5 minutes.`,
+      subject: "🔐 Your OTP for HackEx",
+      html: htmlContent,
     });
     console.log("✅ OTP sent successfully to", email);
   } catch (error) {
@@ -27,16 +46,36 @@ export const sendOTP = async (email, otp) => {
   }
 };
 
-export const sendWelcomeEmail = async (email) => {
+// ✅ Send Welcome Email (Styled HTML)
+export const sendWelcomeEmail = async (email, username) => {
   try {
+    const htmlContent = getEmailTemplate("welcome-email.html", { USER: username });
+
     await transporter.sendMail({
       from: `"HackEx Team" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: "Welcome to HackEx!",
-      text: "Congratulations! Your account has been verified successfully. Get ready for exciting coding challenges!",
+      subject: "🚀 Welcome to HackEx!",
+      html: htmlContent,
     });
     console.log("✅ Welcome email sent to", email);
   } catch (error) {
     console.error("❌ Error sending welcome email:", error);
+  }
+};
+
+// ✅ Send Custom Email (Reusable)
+export const sendCustomEmail = async (email, subject, htmlTemplate, replacements) => {
+  try {
+    const htmlContent = getEmailTemplate(htmlTemplate, replacements);
+
+    await transporter.sendMail({
+      from: `"HackEx Team" <${process.env.SMTP_USER}>`,
+      to: email,
+      subject: subject,
+      html: htmlContent,
+    });
+    console.log(`✅ Custom email sent to ${email}: ${subject}`);
+  } catch (error) {
+    console.error(`❌ Error sending custom email: ${subject}`, error);
   }
 };
