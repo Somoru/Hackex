@@ -29,17 +29,19 @@ jobs:
           cache-dependency-path: frontend/package-lock.json # ✅ Cache dependencies
 
       - name: Install Dependencies
-        working-directory: frontend # ✅ Fix: Ensure we're in the frontend directory
+        working-directory: frontend # ✅ Ensure we're in the frontend directory
         run: npm install
 
       - name: Build Project
-        working-directory: frontend # ✅ Fix: Ensure we're in the frontend directory
+        working-directory: frontend # ✅ Ensure we're in the frontend directory
         run: npm run build
 
       - name: Verify Build Output
         run: |
-          ls -la frontend/dist # ✅ Check if build was successful
-          ls -la frontend # ✅ Confirm frontend directory structure
+          echo "Checking frontend directory..."
+          ls -la frontend
+          echo "Checking dist directory..."
+          ls -la frontend/dist
 
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
