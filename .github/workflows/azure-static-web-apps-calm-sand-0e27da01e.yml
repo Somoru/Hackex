@@ -53,7 +53,7 @@ jobs:
           ###### Repository/Build Configurations ######
           app_location: "frontend" # ✅ Ensure this is correctly set
           api_location: "" # ✅ No API used
-          output_location: "frontend/dist" # ✅ Corrected output folder
+          output_location: "dist" # ✅ Corrected output folder
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
