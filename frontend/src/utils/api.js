@@ -1,4 +1,4 @@
-const API_URL = "http://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api";
+const API_URL = "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api";
 
 export const fetchData = async (endpoint) => {
   try {
