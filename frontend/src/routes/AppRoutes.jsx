@@ -5,7 +5,7 @@ import Login from "../pages/Login";
 import OTPVerification from "../pages/OTPVerification";
 import Dashboard from "../pages/Dashboard";
 import Navbar from "../components/Navbar";
-
+import PrivacyPolicy from "../pages/Privacy-Policy";
 
 const AppRoutes = () => {
   return (
@@ -17,7 +17,7 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/otp-verification" element={<OTPVerification />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        
+        <Route path="/privacy-policy" element={<Privacy-Policy />} />
       </Routes>
     </Router>
   );
