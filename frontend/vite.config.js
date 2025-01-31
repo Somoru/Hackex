@@ -9,13 +9,9 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
   },
-  server: {
-    historyApiFallback: true,
-  },
   resolve: {
     alias: {
-      // ✅ Prevent Vite from treating `index.html` as a route
-      '/index.html': '/',
+      '/index.html': '/', // ✅ Prevents index.html from being treated as a route
     },
   },
 });
