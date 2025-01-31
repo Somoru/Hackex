@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
-          cache: false
+          cache: npm
 
       - name: 📦 Install Dependencies
         working-directory: frontend
@@ -74,9 +74,9 @@ jobs:
       - name: 🔑 Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1E3B1004CD1A4E2590AD506DE8CD4142 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_2060A82EE8FC4C908208EBFEDB45B789 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9E23D567DD20460381E8B2347562CE30 }}
 
       - name: 🚀 Deploy to Azure Web App
         id: deploy-to-webapp
@@ -85,8 +85,3 @@ jobs:
           app-name: 'frontend-app-service'
           slot-name: 'Production'
           package: .
-
-      - name: 🔄 Restart Azure App Service
-        run: az webapp restart --name frontend-app-service --resource-group your-resource-group
-        env:
-          AZURE_CLI: ${{ secrets.AZURE_CLI }}
