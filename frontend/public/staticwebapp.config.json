@@ -1,10 +1,14 @@
 {
-    "routes": [
-      {
-        "route": "/*",
-        "serve": "/index.html",
-        "statusCode": 200
-      }
-    ]
-  }
-  
+  "routes": [
+    {
+      "route": "/*",
+      "serve": "/index.html",
+      "statusCode": 200
+    },
+    {
+      "route": "/*",
+      "rewrite": "/index.html",
+      "statusCode": 200
+    }
+  ]
+}
