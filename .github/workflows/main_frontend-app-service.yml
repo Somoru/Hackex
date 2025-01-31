@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy Node.js app to Azure Web App - frontend-app-service
+name: Build and Deploy Vite + React + Express to Azure App Service
 
 on:
   push:
@@ -13,26 +10,43 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read # Required for actions/checkout
 
     steps:
-      - uses: actions/checkout@v4
+      - name: 🚀 Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js version
+      - name: 📦 Set up Node.js version
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
+          cache: npm
 
-      - name: npm install, build, and test
+      - name: 📦 Install Dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: 🔨 Build Vite App
+        working-directory: frontend
+        run: npm run build
+
+      - name: 🛠️ Move `server.js` to `dist/`
+        run: mv frontend/server.js frontend/dist/
+
+      - name: 🛠️ Ensure `package.json` is deployed
+        run: cp frontend/package.json frontend/dist/
+
+      - name: 🔍 Verify Build Output
         run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+          echo "Listing frontend/dist directory..."
+          ls -la frontend/dist
 
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+      - name: 📦 Zip Artifact for Deployment
+        run: |
+          cd frontend/dist
+          zip -r ../../release.zip ./*
 
-      - name: Upload artifact for deployment job
+      - name: ⬆️ Upload Artifact for Deployment Job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
@@ -45,30 +59,34 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write # Required for requesting JWT
+      contents: read # Required for actions/checkout
 
     steps:
-      - name: Download artifact from build job
+      - name: ⬇️ Download Artifact from Build Job
         uses: actions/download-artifact@v4
         with:
           name: node-app
 
-      - name: Unzip artifact for deployment
+      - name: 📂 Unzip Artifact for Deployment
         run: unzip release.zip
-      
-      - name: Login to Azure
+
+      - name: 🔑 Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1E3B1004CD1A4E2590AD506DE8CD4142 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_773706ED52A14322A266D320A7566219 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9E23D567DD20460381E8B2347562CE30 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: 🚀 Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'frontend-app-service'
           slot-name: 'Production'
           package: .
-          
+
+      - name: 🔄 Restart Azure App Service
+        run: az webapp restart --name frontend-app-service --resource-group your-resource-group
+        env:
+          AZURE_CLI: ${{ secrets.AZURE_CLI }}
