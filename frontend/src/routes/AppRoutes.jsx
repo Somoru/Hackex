@@ -6,6 +6,8 @@ import OTPVerification from "../pages/OTPVerification";
 import Dashboard from "../pages/Dashboard";
 import Navbar from "../components/Navbar";
 import PrivacyPolicy from "../pages/Privacy-Policy";
+import TermsAndConditions from "../pages/TermsAndConditions";
+import RefundPolicy from "../pages/RefundPolicy";
 
 const AppRoutes = () => {
   return (
