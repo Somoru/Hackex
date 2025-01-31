@@ -85,8 +85,3 @@ jobs:
           app-name: 'frontend-app-service'
           slot-name: 'Production'
           package: .
-
-      - name: 🔄 Restart Azure App Service
-        run: az webapp restart --name frontend-app-service --resource-group your-resource-group
-        env:
-          AZURE_CLI: ${{ secrets.AZURE_CLI }}
