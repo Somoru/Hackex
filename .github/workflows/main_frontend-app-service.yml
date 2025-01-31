@@ -1,0 +1,92 @@
+name: Build and Deploy Vite + React + Express to Azure App Service
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Required for actions/checkout
+
+    steps:
+      - name: 🚀 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 📦 Set up Node.js version
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: npm
+
+      - name: 📦 Install Dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: 🔨 Build Vite App
+        working-directory: frontend
+        run: npm run build
+
+      - name: 🛠️ Move `server.js` to `dist/`
+        run: mv frontend/server.js frontend/dist/
+
+      - name: 🛠️ Ensure `package.json` is deployed
+        run: cp frontend/package.json frontend/dist/
+
+      - name: 🔍 Verify Build Output
+        run: |
+          echo "Listing frontend/dist directory..."
+          ls -la frontend/dist
+
+      - name: 📦 Zip Artifact for Deployment
+        run: |
+          cd frontend/dist
+          zip -r ../../release.zip ./*
+
+      - name: ⬆️ Upload Artifact for Deployment Job
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-app
+          path: release.zip
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write # Required for requesting JWT
+      contents: read # Required for actions/checkout
+
+    steps:
+      - name: ⬇️ Download Artifact from Build Job
+        uses: actions/download-artifact@v4
+        with:
+          name: node-app
+
+      - name: 📂 Unzip Artifact for Deployment
+        run: unzip release.zip
+
+      - name: 🔑 Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+
+      - name: 🚀 Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'frontend-app-service'
+          slot-name: 'Production'
+          package: .
+
+      - name: 🔄 Restart Azure App Service
+        run: az webapp restart --name frontend-app-service --resource-group your-resource-group
+        env:
+          AZURE_CLI: ${{ secrets.AZURE_CLI }}
