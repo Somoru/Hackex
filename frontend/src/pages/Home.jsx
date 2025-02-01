@@ -27,7 +27,7 @@ const Home = () => {
       {/* Hero Section */}
       <section className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-gray-900 via-black to-gray-900 text-center relative overflow-hidden p-6">
         <motion.img
-          src={logo}
+          src="../assets/logo.png"
           alt="HackEx Logo"
           className="h-48 mb-6 drop-shadow-lg"
           initial={{ scale: 0.8, opacity: 0 }}
