@@ -17,7 +17,7 @@ const RefundPolicy = () => {
       <h2 className="text-2xl font-semibold text-blue-300 mt-6">Exceptions</h2>
       <p className="text-gray-300">
         Refunds will only be processed in cases where an incorrect amount has been deducted due to a system error or a failed transaction where the amount was debited but the service was not provided.
-        Such cases must be reported to our support team within 7 days of the transaction.
+        Such cases must be reported to our support team within 7 days of the transaction. The refund would be processed within 7 working days.
       </p>
       
       <h2 className="text-2xl font-semibold text-blue-300 mt-6">Contacting Support</h2>

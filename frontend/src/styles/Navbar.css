@@ -1,0 +1,205 @@
+/* 🌟 Glassmorphism Navbar - Layered Effect */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.4); /* Transparent glass look */
+    backdrop-filter: blur(12px);
+    box-shadow: 0px 4px 20px rgba(0, 255, 255, 0.1);
+    transition: all 0.4s ease-in-out;
+    padding: 15px 0;
+    z-index: 1000;
+  }
+  
+  /* 🌟 Shrinking Navbar Effect */
+  .navbar.scrolled {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(18px);
+    padding: 8px 0;
+    transform: scale(0.98);
+  }
+  
+  /* 🌟 Navbar Container */
+  .nav-container {
+    max-width: 1250px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
+  }
+  
+  /* 🌟 Logo Styling */
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .logo {
+    height: 42px;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .logo:hover {
+    transform: scale(1.12) rotate(2deg);
+  }
+  
+  /* 🌟 Brand Name */
+  .logo-text a {
+    font-size: 24px;
+    font-weight: bold;
+    color: cyan;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .logo-text a:hover {
+    color: white;
+    text-shadow: 0 0 12px cyan;
+  }
+  
+  /* 🌟 Navbar Links - Elegant Hover Effect */
+  .nav-links {
+    display: flex;
+    gap: 24px;
+  }
+  
+  .nav-item {
+    font-size: 18px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+  }
+  
+  .nav-item::after {
+    content: "";
+    display: block;
+    height: 2px;
+    width: 0;
+    background: cyan;
+    transition: width 0.3s ease-in-out;
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .nav-item:hover {
+    color: cyan;
+    text-shadow: 0 0 15px cyan;
+  }
+  
+  .nav-item:hover::after {
+    width: 100%;
+  }
+  
+  /* 🌟 Logout Button */
+  .logout-btn {
+    font-size: 18px;
+    color: red;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .logout-btn:hover {
+    color: #ff7070;
+    text-shadow: 0 0 12px red;
+  }
+  
+  /* 🌟 Mobile Menu Button */
+  .menu-button {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+  }
+  
+  .bar {
+    width: 30px;
+    height: 3px;
+    background: white;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .menu-button .open:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+  }
+  .menu-button .open:nth-child(2) {
+    opacity: 0;
+  }
+  .menu-button .open:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+  }
+  
+  /* 🌟 Mobile Menu - Now Slides in Elegantly */
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 250px;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(15px);
+    box-shadow: -2px 0px 15px rgba(0, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 50px 20px;
+    transition: right 0.4s ease-in-out;
+  }
+  
+  .mobile-menu.active {
+    right: 0;
+  }
+  
+  /* 🌟 Mobile Menu Items */
+  .mobile-nav-item {
+    font-size: 18px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .mobile-nav-item:hover {
+    color: cyan;
+    text-shadow: 0 0 15px cyan;
+  }
+  
+  /* 🌟 Mobile Logout Button */
+  .mobile-logout-btn {
+    font-size: 18px;
+    color: red;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .mobile-logout-btn:hover {
+    color: #ff7070;
+  }
+  
+  .close-button {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    cursor: pointer;
+  }
+  
+
+  /* 🌟 Media Queries */
+  @media (max-width: 768px) {
+    .nav-links {
+      display: none;
+    }
+    .menu-button {
+      display: flex;
+    }
+  }
+  

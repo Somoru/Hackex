@@ -1,36 +1,89 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { AuthContext } from "../context/AuthContext";
+import "../styles/Navbar.css";  // ✅ Import the new CSS file
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // ✅ Detect scroll position to shrink navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <nav className="fixed top-0 w-full bg-black bg-opacity-80 text-white shadow-lg z-10">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <img src={logo} alt="HackEx Logo" className="h-10" />
-          <h1 className="text-2xl font-bold text-cyan-400">
+    <nav className={`navbar ${isScrolled ? "scrolled" : ""}`}>
+      <div className="nav-container">
+        {/* Logo */}
+        <div className="logo-container">
+          <img src={logo} alt="HackEx Logo" className="logo" />
+          <h1 className="logo-text">
             <Link to="/">HackEx.in</Link>
           </h1>
         </div>
 
-        <div className="flex gap-6 text-lg">
-          <Link to="/" className="hover:text-cyan-300">Home</Link>
+        {/* Desktop Navigation Links */}
+        <div className="nav-links">
+          <Link to="/" className="nav-item">Home</Link>
 
           {isAuthenticated ? (
             <>
-              <Link to="/dashboard" className="hover:text-cyan-300">Dashboard</Link>
-              <button onClick={() => { logout(); navigate("/"); }} className="text-red-400 hover:text-red-300">
+              <Link to="/dashboard" className="nav-item">Dashboard</Link>
+              <button 
+                onClick={() => { logout(); navigate("/"); }} 
+                className="logout-btn"
+              >
                 Logout
               </button>
             </>
           ) : (
             <>
-              <Link to="/login" className="hover:text-cyan-300">Login</Link>
-              <Link to="/signup" className="hover:text-cyan-300">Signup</Link>
+              <Link to="/login" className="nav-item">Login</Link>
+              <Link to="/signup" className="nav-item">Signup</Link>
+            </>
+          )}
+        </div>
+
+        {/* Mobile Menu Button */}
+        <div className="menu-button" onClick={() => setMenuOpen(!menuOpen)}>
+          <div className={`bar ${menuOpen ? "open" : ""}`}></div>
+          <div className={`bar ${menuOpen ? "open" : ""}`}></div>
+          <div className={`bar ${menuOpen ? "open" : ""}`}></div>
+        </div>
+
+        {/* Mobile Navigation Menu */}
+        <div className={`mobile-menu ${menuOpen ? "active" : ""}`}>
+          {/* Close Button */}
+          <div className="close-button" onClick={() => setMenuOpen(false)}>✖</div>
+          
+          <Link to="/" className="mobile-nav-item" onClick={() => setMenuOpen(false)}>Home</Link>
+
+          {isAuthenticated ? (
+            <>
+              <Link to="/dashboard" className="mobile-nav-item" onClick={() => setMenuOpen(false)}>Dashboard</Link>
+              <button 
+                onClick={() => { logout(); navigate("/"); setMenuOpen(false); }} 
+                className="mobile-logout-btn"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="mobile-nav-item" onClick={() => setMenuOpen(false)}>Login</Link>
+              <Link to="/signup" className="mobile-nav-item" onClick={() => setMenuOpen(false)}>Signup</Link>
             </>
           )}
         </div>
