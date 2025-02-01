@@ -40,7 +40,7 @@ const Home = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1.2 }}
         >
-          HackEx.in
+          HackEx.in...
         </motion.h1>
         <div className="mt-6 p-4 bg-gray-800 rounded-lg shadow-lg text-green-400 text-xl md:text-2xl w-auto max-w-lg">
           <Typewriter
