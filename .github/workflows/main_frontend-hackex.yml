@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Hackex Frontend App Service
+name: Build and deploy Node.js app to Azure Web App - frontend-hackex
 
 on:
   push:
@@ -16,40 +16,23 @@ jobs:
       contents: read #This is required for actions/checkout
 
     steps:
-      - name: 🚀 Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
-          cache: npm
-          
-      - name: 📦 Install Dependencies
-        working-directory: frontend
-        run: npm install
 
-      - name: 🔨 Build Vite App
-        working-directory: frotend
-        run: npm run build
-        
-       - name: 🛠️ Move `server.js` to `dist/`
-        run: mv frontend/server.js frontend/dist/
-
-      - name: 🛠️ Ensure `package.json` is deployed
-        run: cp frontend/package.json frontend/dist/
-
-      - name: 🔍 Verify Build Output
+      - name: npm install, build, and test
         run: |
-          echo "Listing frontend/dist directory..."
-          ls -la frontend/dist
+          npm install
+          npm run build --if-present
+          npm run test --if-present
 
-      - name: 📦 Zip Artifact for Deployment
-        run: |
-          cd frontend/dist
-          zip -r ../../release.zip ./*
+      - name: Zip artifact for deployment
+        run: zip release.zip ./* -r
 
-      - name: ⬆️ Upload Artifact for Deployment Job
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
@@ -77,9 +60,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_ED2F33819C374CC38AE20DB1CF9F5403 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_6DF07351666E48759680045DB17AB152 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_22B9F24250464B47A92013C09D415EC1 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2FC7394C77E846CFB6C4AACF5DDF6C02 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BEBD8C6C93BD4815A61462CD61486F55 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_32F714F936B34B209ABA3A70BECAA194 }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
