@@ -1,7 +1,6 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
+# Deploy Vite Frontend to Azure App Service
 
-name: Build and deploy Node.js app to Azure Web App - frontend-hackex
+name: Deploy Vite App to Azure Web App - frontend-hackex
 
 on:
   push:
@@ -13,31 +12,33 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read # Required for actions/checkout
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js version
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
+          cache: 'npm'
 
-      - name: npm install, run
+      - name: Install Dependencies & Build
         run: |
+          cd frontend
           npm install
           npm run build
-          npm start 
 
-      - name: Zip artifact for deployment
+      - name: Prepare Artifact for Deployment
         run: |
           cd frontend
           zip -r ../release.zip .
 
-      - name: Upload artifact for deployment job
+      - name: Upload Artifact for Deployment
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
+          name: frontend-build
           path: release.zip
 
   deploy:
@@ -47,18 +48,18 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write # Required for JWT authentication
+      contents: read  # Required for actions/checkout
 
     steps:
-      - name: Download artifact from build job
+      - name: Download Artifact from Build Job
         uses: actions/download-artifact@v4
         with:
-          name: node-app
+          name: frontend-build
 
-      - name: Unzip artifact for deployment
+      - name: Unzip Artifact
         run: unzip release.zip
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -66,11 +67,10 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BEBD8C6C93BD4815A61462CD61486F55 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_32F714F936B34B209ABA3A70BECAA194 }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'frontend-hackex'
           slot-name: 'Production'
           package: .
-          
