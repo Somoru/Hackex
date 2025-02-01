@@ -25,14 +25,17 @@ jobs:
       - name: Install Dependencies & Build
         run: |
           cd frontend
-          npm install
+          npm ci --no-audit --no-fund  # Faster installation
           npm run build
-          cp server.js dist/server.js  # Ensure server.js is inside the dist folder
+
+      - name: Clean Up Unnecessary Files (Reduce Deployment Size)
+        run: |
+          rm -rf frontend/node_modules frontend/.git frontend/.github
 
       - name: Prepare Artifact for Deployment
         run: |
-          cp -r frontend/dist/* .  # Copy all frontend build files to the root
-          zip -r release.zip . -x "*.git*"
+          cd frontend
+          zip -r ../release.zip dist server.js package.json
 
       - name: Upload Artifact for Deployment
         uses: actions/upload-artifact@v4
@@ -72,4 +75,4 @@ jobs:
         with:
           app-name: 'frontend-hackex'
           slot-name: 'Production'
-          package: .
+          package: release.zip
