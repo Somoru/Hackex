@@ -1,5 +1,3 @@
-# Deploy Vite Frontend to Azure App Service
-
 name: Deploy Vite App to Azure Web App - frontend-hackex
 
 on:
@@ -12,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read # Required for actions/checkout
+      contents: read
 
     steps:
       - name: Checkout Repository
@@ -29,11 +27,12 @@ jobs:
           cd frontend
           npm install
           npm run build
+          cp server.js dist/server.js  # Ensure server.js is inside the dist folder
 
       - name: Prepare Artifact for Deployment
         run: |
-          cd frontend
-          zip -r ../release.zip .
+          cp -r frontend/dist/* .  # Copy all frontend build files to the root
+          zip -r release.zip . -x "*.git*"
 
       - name: Upload Artifact for Deployment
         uses: actions/upload-artifact@v4
@@ -48,8 +47,8 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write # Required for JWT authentication
-      contents: read  # Required for actions/checkout
+      id-token: write
+      contents: read
 
     steps:
       - name: Download Artifact from Build Job
@@ -58,14 +57,14 @@ jobs:
           name: frontend-build
 
       - name: Unzip Artifact
-        run: unzip release.zip
+        run: unzip release.zip -d .
 
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2FC7394C77E846CFB6C4AACF5DDF6C02 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BEBD8C6C93BD4815A61462CD61486F55 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_32F714F936B34B209ABA3A70BECAA194 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
