@@ -8,6 +8,7 @@ import Typewriter from "typewriter-effect";
 import { FaInstagram } from "react-icons/fa";
 import Countdown from "react-countdown";
 import "../styles/HeroSection.css";
+import ContactForm from "../components/ContactForm";
 const Home = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -369,129 +370,62 @@ const Home = () => {
 </section>
 
       {/* 🚀 REFINED CONTACT US & FOOTER 🚀 */}
-<section className="py-16 bg-gradient-to-b from-gray-900 to-black text-white">
-  <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16">
-    
-    {/* Contact Us Form */}
-    <div>
-      <h2 className="text-4xl font-extrabold text-cyan-400 mb-6">Contact Us</h2>
-      <p className="text-gray-400 mb-8">
-        Have questions or need support? Get in touch with us, and we'll get back to you as soon as possible.
-      </p>
-      <form className="space-y-6">
-        
-        {/* Name Field */}
-        <div>
-          <label htmlFor="name" className="block text-sm font-bold text-gray-400">
-            Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            placeholder="Enter your name"
-            className="w-full mt-2 p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-          />
-        </div>
+      <section className="py-16 bg-gradient-to-b from-gray-900 to-black text-white">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16">
+          
+          {/* Contact Form (New Component) */}
+          <ContactForm /> 
 
-        {/* Email Field */}
-        <div>
-          <label htmlFor="email" className="block text-sm font-bold text-gray-400">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            placeholder="Enter your email"
-            className="w-full mt-2 p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-          />
-        </div>
+          {/* Footer Content - Quick Links & Instagram QR */}
+          <div className="flex flex-col justify-between">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              {/* Quick Links */}
+              <div>
+                <h2 className="text-3xl font-extrabold text-cyan-400 mb-4">Quick Links</h2>
+                <ul className="space-y-3">
+                  <li>
+                    <a href="/terms-and-conditions" className="text-gray-400 hover:text-white transition">
+                      Terms & Conditions
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/privacy-policy" className="text-gray-400 hover:text-white transition">
+                      Privacy Policy
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/refund-policy" className="text-gray-400 hover:text-white transition">
+                      Refund Policy
+                    </a>
+                  </li>
+                </ul>
+              </div>
 
-        {/* Message Field */}
-        <div>
-          <label htmlFor="message" className="block text-sm font-bold text-gray-400">
-            Message
-          </label>
-          <textarea
-            id="message"
-            rows="4"
-            placeholder="Enter your message"
-            className="w-full mt-2 p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-          ></textarea>
-        </div>
+              {/* Instagram QR Section */}
+              <div className="flex flex-col items-center">
+                <h2 className="text-3xl font-extrabold text-cyan-400 mb-4">Follow Us</h2>
+                <div className="relative group">
+                  <a href="https://instagram.com/hackex.in" target="_blank" rel="noopener noreferrer">
+                    <img
+                      src={qr}
+                      alt="Instagram QR Code"
+                      className="w-40 h-40 rounded-lg shadow-lg transition transform group-hover:scale-110"
+                    />
+                  </a>
+                  <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg">
+                    <p className="text-cyan-400 text-xl font-bold">@hackex.in</p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-3 rounded-lg shadow-lg transition"
-        >
-          Submit
-        </button>
-      </form>
-    </div>
-
-    {/* Footer Content - Quick Links & Instagram QR */}
-    <div className="flex flex-col justify-between">
-      
-      {/* Quick Links & Instagram QR */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        
-        {/* Quick Links */}
-        <div>
-          <h2 className="text-3xl font-extrabold text-cyan-400 mb-4">Quick Links</h2>
-          <ul className="space-y-3">
-            <li>
-              <a href="/terms-and-conditions" className="text-gray-400 hover:text-white transition">
-                Terms & Conditions
-              </a>
-            </li>
-            <li>
-              <a href="/privacy-policy" className="text-gray-400 hover:text-white transition">
-                Privacy Policy
-              </a>
-            </li>
-            <li>
-              <a href="/refund-policy" className="text-gray-400 hover:text-white transition">
-                Refund Policy
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        {/* Instagram QR Section - Enlarged QR */}
-        <div className="flex flex-col items-center">
-          <h2 className="text-3xl font-extrabold text-cyan-400 mb-4">Follow Us</h2>
-          <div className="relative group">
-            
-            {/* Clickable & Scannable QR Code */}
-            <a
-              href="https://instagram.com/hackex.in"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                src={qr} // Replace with actual QR code path
-                alt="Instagram QR Code"
-                className="w-40 h-40 rounded-lg shadow-lg transition transform group-hover:scale-110"
-              />
-            </a>
-
-            {/* Hover Effect - Show Instagram Handle */}
-            <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg">
-              <p className="text-cyan-400 text-xl font-bold">@hackex.in</p>
+            {/* Branding & Copyright */}
+            <div className="mt-12 text-gray-400 text-sm text-center">
+              © {new Date().getFullYear()} HackEx. All rights reserved.
             </div>
           </div>
         </div>
-
-      </div>
-
-      {/* Branding & Copyright */}
-      <div className="mt-12 text-gray-400 text-sm text-center">
-        © {new Date().getFullYear()} HackEx. All rights reserved.
-      </div>
-      
-    </div>
-  </div>
-</section>
+      </section>
 
 
     </div>
