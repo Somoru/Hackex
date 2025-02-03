@@ -115,7 +115,7 @@ const Home = () => {
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ repeat: Infinity, duration: 1.2 }}
           >
-            <span className="text-gray-500 line-through text-4xl drop-shadow-md">₹50</span>
+            <span className="text-gray-500 line-through text-4xl drop-shadow-md">₹60</span>
             <span className="text-cyan-400 text-8xl drop-shadow-md">₹35</span>
           </motion.div>
 

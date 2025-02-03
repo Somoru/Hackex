@@ -37,7 +37,6 @@ const Dashboard = () => {
         setLoading(false);
       }
     };
-
     fetchUser();
   }, [navigate]);
 
