@@ -399,7 +399,7 @@ const Home = () => {
                     </a>
                   </li>
                   <li>
-                    contact @ team@hackex.in or 8886288996
+                    contact team@hackex.in or 8886288996
                   </li>
                 </ul>
               </div>
