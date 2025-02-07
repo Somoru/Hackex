@@ -116,7 +116,7 @@ const Home = () => {
             transition={{ repeat: Infinity, duration: 1.2 }}
           >
             <span className="text-gray-500 line-through text-4xl drop-shadow-md">₹60</span>
-            <span className="text-cyan-400 text-8xl drop-shadow-md">₹35</span>
+            <span className="text-cyan-400 text-8xl drop-shadow-md">₹39</span>
           </motion.div>
 
           {/* 🚀 BENEFITS LIST */}
@@ -250,11 +250,11 @@ const Home = () => {
   {/* Team Grid */}
   <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
     {[
-      { name: "N Pranav", role: "Logistics Head", icon: "📦", color: "bg-yellow-500" },
-      { name: "Alekhya Nelabhotla", role: "Marketing Head", icon: "📣", color: "bg-pink-500" },
-      { name: "Rangisetti Lakshmi Pavan", role: "Technical Head", icon: "💻", color: "bg-blue-500" },
-      { name: "Peddi Praharshitha", role: "Content Head", icon: "✍️", color: "bg-green-500" },
-      { name: "Vedulla Bharath", role: "Finance Head", icon: "💰", color: "bg-purple-500" },
+      { name: "N Pranav", role: "Logistics Head", icon: "📦", color: "bg-yellow-500", quote:"From Challenges to Rewards, We Make Every Step Count" },
+      { name: "Alekhya Nelabhotla", role: "Marketing Head", icon: "📣", color: "bg-pink-500", quote:"Bringing HackEx to the Spotlight, One Campaign at a Time"},
+      { name: "Rangisetti Lakshmi Pavan", role: "Technical Head", icon: "💻", color: "bg-blue-500", quote:"Crafting the Code Behind Every Challenge and Reward"},
+      { name: "Peddi Praharshitha", role: "Content Head", icon: "✍️", color: "bg-green-500", quote:"Turning Ideas into Engaging Content for Every Coder"},
+      { name: "Vedulla Bharath", role: "Finance Head", icon: "💰", color: "bg-purple-500" , quote: "Balancing Growth and Stability to Ensure HackEx’s Success"},
     ].map((member, index) => (
       <motion.div
         key={index}
@@ -282,7 +282,7 @@ const Home = () => {
           <h3 className="text-xl font-bold text-white">{member.name}</h3>
           <p className="text-gray-300 mb-2">{member.role}</p>
           <p className="text-gray-400 italic text-xs">
-            "Driving innovation and growth."
+            {member.quote}
           </p>
         </div>
       </motion.div>
@@ -399,7 +399,7 @@ const Home = () => {
                     </a>
                   </li>
                   <li>
-                    contact team@hackex.in or 8886288996
+                    Contact: team@hackex.in or 8886288996
                   </li>
                 </ul>
               </div>
