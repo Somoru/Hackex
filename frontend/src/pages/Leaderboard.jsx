@@ -8,8 +8,8 @@ const Leaderboard = () => {
     const fetchLeaderboard = async () => {
       try {
         const response = await fetch(
-          // "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/leaderboard"
-          "http://localhost:5000/api/leaderboard"
+           "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/leaderboard"
+          //"http://localhost:5000/api/leaderboard"
         );
 
         if (!response.ok) throw new Error("Failed to fetch leaderboard");

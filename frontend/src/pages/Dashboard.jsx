@@ -17,8 +17,8 @@ const Dashboard = () => {
 
             try {
                 const response = await fetch(
-                    // "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status",
-                    "http://localhost:5000/api/auth/user-status",
+                    "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status",
+                    //"http://localhost:5000/api/auth/user-status",
                     { method: "GET", headers: { Authorization: `Bearer ${token}` } }
                 );
 
