@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
-    username: { type: String, unique: true, required: true, index: true }, // Add Index
-    email: { type: String, unique: true, required: true, index: true }, // Add Index
-    password: { type: String, required: true },
-    isVerified: { type: Boolean, default: false },
-    hasPaid: { type: Boolean, default: false },
-  });
+  username: { type: String, unique: true, required: true, index: true },
+  email: { type: String, unique: true, required: true, index: true },
+  password: { type: String, required: true },
+  isVerified: { type: Boolean, default: false },
+  paymentStatus: { type: String, enum: ["PENDING", "SUCCESS", "FAILED"], default: "PENDING" }
+});
 
-export default mongoose.model("User", UserSchema);
+const User = mongoose.model("User", UserSchema);
+export default User;

@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { AuthContext } from "../context/AuthContext";
-import "../styles/Navbar.css";  // ✅ Import the new CSS file
+import "../styles/Navbar.css";  // ✅ Import the CSS file
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
@@ -13,11 +13,7 @@ const Navbar = () => {
   // ✅ Detect scroll position to shrink navbar
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -41,6 +37,7 @@ const Navbar = () => {
           {isAuthenticated ? (
             <>
               <Link to="/dashboard" className="nav-item">Dashboard</Link>
+              <Link to="/leaderboard" className="nav-item">Leaderboard</Link>
               <button 
                 onClick={() => { logout(); navigate("/"); }} 
                 className="logout-btn"
@@ -65,7 +62,6 @@ const Navbar = () => {
 
         {/* Mobile Navigation Menu */}
         <div className={`mobile-menu ${menuOpen ? "active" : ""}`}>
-          {/* Close Button */}
           <div className="close-button" onClick={() => setMenuOpen(false)}>✖</div>
           
           <Link to="/" className="mobile-nav-item" onClick={() => setMenuOpen(false)}>Home</Link>
@@ -73,6 +69,7 @@ const Navbar = () => {
           {isAuthenticated ? (
             <>
               <Link to="/dashboard" className="mobile-nav-item" onClick={() => setMenuOpen(false)}>Dashboard</Link>
+              <Link to="/leaderboard" className="mobile-nav-item" onClick={() => setMenuOpen(false)}>Leaderboard</Link>
               <button 
                 onClick={() => { logout(); navigate("/"); setMenuOpen(false); }} 
                 className="mobile-logout-btn"

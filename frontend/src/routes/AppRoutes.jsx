@@ -5,11 +5,15 @@ import Login from "../pages/Login";
 import OTPVerification from "../pages/OTPVerification";
 import Dashboard from "../pages/Dashboard";
 import Navbar from "../components/Navbar";
+import Leaderboard from "../pages/Leaderboard";
 import PrivacyPolicy from "../pages/Privacy-Policy";
 import TermsAndConditions from "../pages/TermsAndConditions";
 import RefundPolicy from "../pages/RefundPolicy";
+import AdminPanel from "../pages/AdminPanel";
+import AdminLogin from "../pages/AdminLogin";
 
 const AppRoutes = () => {
+  const isAdminAuthenticated = !!localStorage.getItem("adminToken");
   return (
     <Router>
       <Navbar /> {/* ✅ Keep Navbar inside Router */}
@@ -19,6 +23,9 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/otp-verification" element={<OTPVerification />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/admin" element={isAdminAuthenticated ? <AdminPanel /> : <Navigate to="/admin/login" />} />
+                <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
         <Route path="/refund-policy" element={<RefundPolicy />} />

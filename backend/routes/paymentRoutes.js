@@ -1,18 +1,10 @@
 import express from "express";
-import User from "../models/User.js";
+import { initiatePayment, paymentCallback, paymentWebhook } from "../controllers/paymentController.js";
 
 const router = express.Router();
 
-router.post("/payment-webhook", async (req, res) => {
-    const { paymentStatus, email } = req.body;
-  
-    if (paymentStatus !== "SUCCESS") {
-      return res.status(400).json({ message: "Payment failed or incomplete." });
-    }
-  
-    await User.findOneAndUpdate({ email }, { hasPaid: true });
-  
-    res.json({ message: "Payment verified successfully" });
-  });
-  
+router.post("/initiate-payment", initiatePayment);
+router.post("/payment-callback", paymentCallback);
+router.post("/webhook", paymentWebhook);
+
 export default router;

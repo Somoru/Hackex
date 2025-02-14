@@ -1,4 +1,19 @@
-export const initiatePayment = async () => {
-    window.location.href = "https://www.phonepe.com/payment-link"; // Replace with actual UPI link
-  };
-  
+import axios from "axios";
+
+export const initiatePayment = async (userId, amount) => {
+    try {
+        const response = await axios.post(
+            "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/payment/initiate-payment",
+            { userId, amount }
+        );
+
+        if (response.data.success) {
+            window.location.href = response.data.redirectUrl; // Redirect to PhonePe
+        } else {
+            throw new Error("Payment initiation failed.");
+        }
+    } catch (error) {
+        console.error("❌ Error initiating payment:", error);
+        alert("Payment failed. Please try again.");
+    }
+};
