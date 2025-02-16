@@ -105,21 +105,26 @@ export const getUserStatus = async () => {
 
 export const loginUser = async (email, password) => {
   try {
-    console.log("🔍 Sending Login Request:", { email, password });
+      console.log("🔍 Sending Login Request:", { email, password });
 
-    const response = await fetch("https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+      const response = await fetch("https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+      });
 
-    const data = await response.json();
-    console.log("✅ Login response:", data);
+      const data = await response.json();
+      console.log("✅ Login response:", data);
 
-    if (!response.ok) throw new Error(data.message);
-    return data.token;
+      if (!response.ok) throw new Error(data.message);
+
+      // ✅ Store token in correct format
+      localStorage.setItem("authToken", `Bearer ${data.token}`);
+
+      return data.token;
   } catch (error) {
-    console.error("❌ Login Error:", error);
-    throw error;
+      console.error("❌ Login Error:", error);
+      throw error;
   }
 };
+

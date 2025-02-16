@@ -102,20 +102,46 @@ router.post("/verify-otp", async (req, res) => {
     }
 });
 
-// ✅ Get User Status (Dashboard)
-router.get("/user-status", async (req, res) => {
+// ✅ Middleware to Verify User Authentication
+const authenticateUser = (req, res, next) => {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    console.log("🔍 Incoming Token:", token);
+
+    if (!token) {
+        console.error("❌ Unauthorized: No Token Provided");
+        return res.status(401).json({ message: "Unauthorized: No token provided" });
+    }
+
     try {
-        const token = req.headers.authorization?.split(" ")[1];
-        if (!token) return res.status(401).json({ message: "Unauthorized" });
-
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.userId);
-
-        if (!user) return res.status(404).json({ message: "User not found" });
-
-        res.json({ username: user.username, hasPaid: user.hasPaid });
+        req.user = decoded;
+        console.log("✅ Token Verified:", decoded);
+        next();
     } catch (error) {
-        res.status(401).json({ message: "Invalid token" });
+        console.error("❌ Invalid Token:", error.message);
+        return res.status(401).json({ message: "Unauthorized: Invalid token" });
+    }
+};
+
+// ✅ Get User Status (Now Includes Full Debugging)
+router.get("/user-status", authenticateUser, async (req, res) => {
+    try {
+        console.log("📡 Fetching User from Database with ID:", req.user.userId);
+
+        const user = await User.findById(req.user.userId);
+
+        if (!user) {
+            console.error("❌ User Not Found in Database!");
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        console.log("✅ User Found:", user);
+        res.json({ username: user.username, userId: user._id, paymentStatus: user.paymentStatus });
+
+    } catch (error) {
+        console.error("🔥 Server Error in `/user-status`:", error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
