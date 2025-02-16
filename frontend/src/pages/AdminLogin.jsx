@@ -10,7 +10,7 @@ const AdminLogin = ({ onLogin }) => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post("http://localhost:5000/api/auth/admin/login", {
+            const response = await axios.post("https://hackex.in/api/auth/admin/login", {
                 username,
                 password
             });

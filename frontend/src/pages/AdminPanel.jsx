@@ -17,7 +17,7 @@ const AdminPanel = () => {
                 return;
             }
 
-            const response = await axios.get("http://localhost:5000/api/payment/admin/pending-payments", {
+            const response = await axios.get("https://hackex.in/api/payment/admin/pending-payments", {
                 headers: { Authorization: `Bearer ${token}` } // ✅ Include Token
             });
 
@@ -34,7 +34,7 @@ const AdminPanel = () => {
             const token = localStorage.getItem("adminToken");
             if (!token) return;
 
-            await axios.post("http://localhost:5000/api/payment/admin/update-payment", 
+            await axios.post("https://hackex.in/api/payment/admin/update-payment", 
                 { transactionID, status }, 
                 { headers: { Authorization: `Bearer ${token}` } } // ✅ Include Token
             );

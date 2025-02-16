@@ -17,7 +17,7 @@ connectDB();
 // ✅ Improved CORS Configuration
 const allowedOrigins = [
     "http://localhost:3000",  // ✅ Local frontend
-    "https://your-production-frontend.com" // ✅ Production frontend (replace with actual domain)
+    "https://hackex.in" // ✅ Production frontend (replace with actual domain)
 ];
 
 app.use(cors({
