@@ -12,37 +12,36 @@ const PHONEPE_BASE_URL = process.env.PHONEPE_BASE_URL;
 export const createPayment = async (userId, amount) => {
     try {
         const transactionId = `TXN_${userId}_${Date.now()}`;
+        const apiEndpoint = "/pg/v1/pay";
         const payload = {
             merchantId: PHONEPE_MERCHANT_ID,
-            transactionId,
+            merchantTransactionId: transactionId,
             amount: amount * 100, // Convert to paise
+            merchantUserId: userId,
             redirectUrl: `${process.env.FRONTEND_URL}/payment-success?txnId=${transactionId}`,
             callbackUrl: `${process.env.BACKEND_URL}/api/payment/webhook`,
-            mobileNumber: null,
-            paymentInstrument: { type: "UPI_INTENT" },
+            paymentInstrument: { type: "UPI_INTENT" }
         };
 
         const payloadString = JSON.stringify(payload);
+        const dataToHash = payloadString + apiEndpoint + PHONEPE_SALT_KEY;
         
-        // ✅ FIX: Use Base64 Encoding for X-VERIFY
-        const checksum = crypto.createHash("sha256")
-            .update(payloadString + PHONEPE_SALT_KEY)
-            .digest("base64");
-            
+        // ✅ FIX: Use HEX Encoding instead of Base64 for X-VERIFY
+        const checksum = crypto.createHash("sha256").update(dataToHash).digest("hex");
         const xVerify = `${checksum}###${PHONEPE_SALT_INDEX}`;
 
         console.log("📡 Sending Payment Request to PhonePe...");
-        console.log("🔹 Payload:", payload);
+        console.log("🔹 Payload:", JSON.stringify(payload, null, 2));
         console.log("🔹 X-VERIFY:", xVerify);
 
-        const response = await axios.post(PHONEPE_BASE_URL, payload, {
+        const response = await axios.post(PHONEPE_BASE_URL + apiEndpoint, payload, {
             headers: {
                 "Content-Type": "application/json",
                 "X-VERIFY": xVerify,
             },
         });
 
-        console.log("✅ PhonePe API Response:", response.data);
+        console.log("✅ PhonePe API Response:", JSON.stringify(response.data, null, 2));
 
         return {
             success: response.data.success,
