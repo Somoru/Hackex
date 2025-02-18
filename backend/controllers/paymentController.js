@@ -4,15 +4,22 @@ import { createPayment } from "../services/paymentService.js";
 
 export const initiatePayment = async (req, res) => {
     try {
+        console.log("📡 Received Payment Initiation Request:", req.body);
+
         const { userId, amount } = req.body;
 
         if (!userId || !amount) {
+            console.error("❌ Missing required fields: userId or amount");
             return res.status(400).json({ message: "Missing required fields" });
         }
 
         const paymentResponse = await createPayment(userId, amount);
-        if (!paymentResponse.success) {
-            return res.status(400).json({ message: "Payment initiation failed" });
+
+        console.log("✅ Payment API Response:", paymentResponse);
+
+        if (!paymentResponse.success || !paymentResponse.redirectUrl) {
+            console.error("❌ Payment initiation failed:", paymentResponse.message);
+            return res.status(400).json({ message: "Payment initiation failed", error: paymentResponse.message });
         }
 
         res.json({ success: true, redirectUrl: paymentResponse.redirectUrl });
@@ -21,6 +28,7 @@ export const initiatePayment = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
 
 export const paymentCallback = async (req, res) => {
     try {
