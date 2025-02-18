@@ -31,8 +31,8 @@ const PaymentForm = ({ onClose }) => {
                 console.log("📡 Sending API Request to /user-status...");
                 
                 const response = await axios.get(
-                    //"http://localhost:5000/api/auth/user-status", // ✅ Local Development
-                    "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status", // ✅ Production
+                    "http://localhost:5000/api/auth/user-status", // ✅ Local Development
+                    //"https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status", // ✅ Production
                     {
                         headers: {
                             Authorization: token, // ✅ Ensures correct token format
@@ -89,8 +89,8 @@ const PaymentForm = ({ onClose }) => {
 
         try {
             const response = await axios.post(
-                //"http://localhost:5000/api/payment/initiate-payment", // ✅ Local Development
-                "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/payment/initiate-payment", // ✅ Production
+                "http://localhost:5000/api/payment/initiate-payment", // ✅ Local Development
+                //"https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/payment/initiate-payment", // ✅ Production
                 { userId, amount },
                 {
                     headers: {

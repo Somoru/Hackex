@@ -21,8 +21,8 @@ const ContactForm = () => {
 
     try {
       const response = await fetch(
-        "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/contact", // Backend API URL
-        //"http://localhost:5000/api/contact", // Local API URL
+        //"https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/contact", // Backend API URL
+        "http://localhost:5000/api/contact", // Local API URL
         {
           method: "POST",
           headers: {
