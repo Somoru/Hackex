@@ -23,8 +23,17 @@ export const createPayment = async (userId, amount) => {
         };
 
         const payloadString = JSON.stringify(payload);
-        const checksum = crypto.createHash("sha256").update(payloadString + PHONEPE_SALT_KEY).digest("hex");
+        
+        // ✅ FIX: Use Base64 Encoding for X-VERIFY
+        const checksum = crypto.createHash("sha256")
+            .update(payloadString + PHONEPE_SALT_KEY)
+            .digest("base64");
+            
         const xVerify = `${checksum}###${PHONEPE_SALT_INDEX}`;
+
+        console.log("📡 Sending Payment Request to PhonePe...");
+        console.log("🔹 Payload:", payload);
+        console.log("🔹 X-VERIFY:", xVerify);
 
         const response = await axios.post(PHONEPE_BASE_URL, payload, {
             headers: {
@@ -33,13 +42,15 @@ export const createPayment = async (userId, amount) => {
             },
         });
 
+        console.log("✅ PhonePe API Response:", response.data);
+
         return {
-            success: true,
+            success: response.data.success,
             transactionId,
-            redirectUrl: response.data.data.instrumentResponse.redirectInfo.url,
+            redirectUrl: response.data?.data?.instrumentResponse?.redirectInfo?.url || null,
         };
     } catch (error) {
-        console.error("❌ PhonePe API error:", error.response?.data || error.message);
-        return { success: false, message: "Payment initiation failed" };
+        console.error("❌ PhonePe API Error:", error.response?.data || error.message);
+        return { success: false, message: error.response?.data?.message || "Payment initiation failed" };
     }
 };
