@@ -45,23 +45,25 @@ export const createPayment = async (userId, amount) => {
   try {
     const accessToken = await getAccessToken();
     const transactionId = `TXN_${userId}_${Date.now()}`;
-    const apiEndpoint = "/checkout/v2/pay";
+    const apiEndpoint = "/pg/v1/pay";  // ✅ Updated endpoint
 
     const payload = {
-      merchantId: process.env.PHONEPE_MERCHANT_ID, // ✅ Added merchantId
-      merchantOrderId: transactionId,
-      merchantUserId: userId,                      // ✅ Added merchantUserId
-      amount: amount * 100,                        // Amount in paise
-      expireAfter: 900,                            // 15 minutes
-      paymentInstrument: {                         // ✅ Corrected field name
-        type: "PG_CHECKOUT",
+      merchantId: process.env.PHONEPE_MERCHANT_ID,        // ✅ Required field
+      merchantOrderId: transactionId,                     // ✅ Required field
+      merchantUserId: userId,                             // ✅ Required field
+      amount: amount * 100,                               // Amount in paise
+      expireAfter: 900,                                   // Payment expiry in seconds
+      merchantUrls: {                                     // ✅ Correct placement
         redirectUrl: `${FRONTEND_URL}/payment-success?txnId=${transactionId}`,
         callbackUrl: `${BACKEND_URL}/api/payment/webhook`
       },
-      metaInfo: {                                  // Optional but included
+      paymentInstrument: {                                // ✅ Corrected placement
+        type: "PG_CHECKOUT"
+      },
+      metaInfo: JSON.stringify({                          // ✅ Stringify metaInfo
         udf1: userId,
         udf2: "HackEx Payment"
-      }
+      })
     };
 
     console.log("📡 Sending Payment Request to PhonePe...");
@@ -70,7 +72,7 @@ export const createPayment = async (userId, amount) => {
     const response = await axios.post(`${PHONEPE_BASE_URL}${apiEndpoint}`, payload, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${accessToken}`           // ✅ Ensure proper Bearer token
       }
     });
 
