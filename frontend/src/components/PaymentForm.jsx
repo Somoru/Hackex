@@ -80,52 +80,44 @@ const PaymentForm = ({ onClose }) => {
 
     const handlePayment = async () => {
         if (!userId) {
-            console.error("❌ Attempted Payment Without a Valid User ID!");
-            alert("Authentication error. Please log in again.");
-            return;
+          console.error("❌ Attempted Payment Without a Valid User ID!");
+          alert("Authentication error. Please log in again.");
+          return;
         }
-
+      
         console.log("📡 Initiating Payment for userId:", userId, "Amount:", amount);
-
+      
         try {
-            const response = await axios.post(
-                //"http://localhost:5000/api/payment/initiate-payment", // ✅ Local Development
-                "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/payment/initiate-payment", // ✅ Production
-                { userId, amount },
-                {
-                    headers: {
-                        Authorization: localStorage.getItem("authToken"),
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            console.log("✅ Payment Initiation Response:", response.data);
-            if (response.data.success) {
-                console.log("🔗 Redirecting User to Payment Page:", response.data.redirectUrl);
-                window.location.href = response.data.redirectUrl;
-            } else {
-                console.error("❌ Payment Initiation Failed:", response.data.message);
-                alert("Payment initiation failed. Try again.");
+          const response = await axios.post(
+            "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/payment/initiate-payment",
+            { userId, amount },
+            {
+              headers: {
+                Authorization: localStorage.getItem("authToken"),
+                "Content-Type": "application/json",
+              },
             }
-
+          );
+      
+          console.log("✅ Payment Initiation Response:", response.data);
+      
+          if (response.data.success && response.data.redirectUrl) {
+            console.log("🔗 Redirecting to Payment Page:", response.data.redirectUrl);
+            alert("Redirecting to payment page...");
+            window.location.href = response.data.redirectUrl; // ✅ Safe redirect
+          } else {
+            console.error("❌ Payment initiation failed:", response.data.message);
+            alert(`Payment initiation failed: ${response.data.message || "Unknown error"}`);
+          }
         } catch (error) {
-            console.error("❌ Payment API Request Failed:", error);
-
-            if (error.response) {
-                console.error("🔴 Server Response:", error.response);
-                console.error("🔴 Server Response Data:", error.response.data);
-                console.error("🔴 Server Response Status:", error.response.status);
-                console.error("🔴 Server Response Headers:", error.response.headers);
-            } else if (error.request) {
-                console.error("⚠️ Request Sent but No Response Received!", error.request);
-            } else {
-                console.error("❌ Unexpected Error:", error.message);
-            }
-
-            alert("Payment failed. Please try again.");
+          console.error("❌ Payment API Request Failed:", error);
+      
+          const serverMessage = error.response?.data?.message || "Server error. Please try again.";
+      
+          alert(`Payment failed: ${serverMessage}`);
         }
-    };
+      };
+      
 
     return (
         <div className="payment-form bg-gray-900 p-6 rounded-lg shadow-md border border-gray-700 text-white max-w-md w-full mx-auto">
