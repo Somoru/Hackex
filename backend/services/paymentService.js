@@ -13,24 +13,21 @@ const {
   BACKEND_URL
 } = process.env;
 
-const getAccessToken = async () => {
-  const tokenUrl = "https://api-preprod.phonepe.com/oauth2/token";
-  const payload = new URLSearchParams({
-    grantType: "client_credentials",
-    clientId: process.env.PHONEPE_CLIENT_ID,
-    clientSecret: process.env.PHONEPE_CLIENT_SECRET
-  });
-
-  const response = await axios.post(tokenUrl, payload, {
-    headers: { "Content-Type": "application/x-www-form-urlencoded" }
-  });
-
-  return response.data.access_token;
+/**
+ * Generate the SHA-256 hash for X-VERIFY
+ */
+const generateXVerify = (payload, apiEndpoint) => {
+  const payloadString = JSON.stringify(payload);
+  const dataToHash = payloadString + apiEndpoint + PHONEPE_SALT_KEY;
+  const checksum = crypto.createHash("sha256").update(dataToHash).digest("hex");
+  return `${checksum}###${PHONEPE_SALT_INDEX}`;
 };
 
+/**
+ * Create a payment request to PhonePe
+ */
 export const createPayment = async (userId, amount) => {
   try {
-    const accessToken = await getAccessToken();
     const transactionId = `TXN_${userId}_${Date.now()}`;
     const apiEndpoint = "/pg/v1/pay";
 
@@ -38,25 +35,21 @@ export const createPayment = async (userId, amount) => {
       merchantId: PHONEPE_MERCHANT_ID,
       merchantTransactionId: transactionId,
       merchantUserId: userId,
-      amount: amount * 100,
+      amount: amount * 100, // Amount in paise
       redirectUrl: `${FRONTEND_URL}/payment-success?txnId=${transactionId}`,
       callbackUrl: `${BACKEND_URL}/api/payment/webhook`,
       paymentInstrument: { type: "UPI_INTENT" }
     };
 
-    const payloadString = JSON.stringify(payload);
-    const dataToHash = payloadString + apiEndpoint + PHONEPE_SALT_KEY;
-    const checksum = crypto.createHash("sha256").update(dataToHash).digest("hex");
-    const xVerify = `${checksum}###${PHONEPE_SALT_INDEX}`;
+    const xVerify = generateXVerify(payload, apiEndpoint);
 
     console.log("📡 Sending Payment Request to PhonePe...");
-    console.log("🔹 Payload:", payload);
+    console.log("🔹 Payload:", JSON.stringify(payload, null, 2));
     console.log("🔹 X-VERIFY:", xVerify);
 
     const response = await axios.post(`${PHONEPE_BASE_URL}${apiEndpoint}`, payload, {
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${accessToken}`,
         "X-VERIFY": xVerify
       }
     });
