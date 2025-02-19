@@ -16,7 +16,7 @@ const {
 export const createPayment = async (userId, amount) => {
   try {
     const transactionId = `TXN_${userId}_${Date.now()}`;
-    const apiEndpoint = "/v1/pay";  // ✅ Correct endpoint
+    const apiEndpoint = "pg/v1/pay";  // ✅ Correct endpoint
 
     const payload = {
       merchantId: PHONEPE_MERCHANT_ID,
