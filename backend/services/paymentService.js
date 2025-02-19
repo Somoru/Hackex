@@ -7,12 +7,15 @@ dotenv.config();
 const PHONEPE_MERCHANT_ID = process.env.PHONEPE_MERCHANT_ID;
 const PHONEPE_SALT_KEY = process.env.PHONEPE_SALT_KEY;
 const PHONEPE_SALT_INDEX = process.env.PHONEPE_SALT_INDEX;
-const PHONEPE_BASE_URL = process.env.PHONEPE_BASE_URL;
+const PHONEPE_BASE_URL = process.env.PHONEPE_BASE_URL; // Ensure this is correctly set in .env
+
+
+
 
 export const createPayment = async (userId, amount) => {
     try {
         const transactionId = `TXN_${userId}_${Date.now()}`;
-        const apiEndpoint = "/pg/v1/pay";
+        const apiEndpoint = "/v2/pay"; // Ensure this is the correct endpoint
         const payload = {
             merchantId: PHONEPE_MERCHANT_ID,
             merchantTransactionId: transactionId,
