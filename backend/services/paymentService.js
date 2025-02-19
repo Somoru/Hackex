@@ -48,16 +48,17 @@ export const createPayment = async (userId, amount) => {
     const apiEndpoint = "/checkout/v2/pay";
 
     const payload = {
+      merchantId: process.env.PHONEPE_MERCHANT_ID, // ✅ Added merchantId
       merchantOrderId: transactionId,
-      amount: amount * 100, // Amount in paise
-      expireAfter: 900, // 15 minutes
-      paymentFlow: {
+      merchantUserId: userId,                      // ✅ Added merchantUserId
+      amount: amount * 100,                        // Amount in paise
+      expireAfter: 900,                            // 15 minutes
+      paymentInstrument: {                         // ✅ Corrected field name
         type: "PG_CHECKOUT",
-        merchantUrls: {
-          redirectUrl: `${FRONTEND_URL}/payment-success?txnId=${transactionId}`
-        }
+        redirectUrl: `${FRONTEND_URL}/payment-success?txnId=${transactionId}`,
+        callbackUrl: `${BACKEND_URL}/api/payment/webhook`
       },
-      metaInfo: {
+      metaInfo: {                                  // Optional but included
         udf1: userId,
         udf2: "HackEx Payment"
       }
@@ -69,7 +70,7 @@ export const createPayment = async (userId, amount) => {
     const response = await axios.post(`${PHONEPE_BASE_URL}${apiEndpoint}`, payload, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}` // ✅ Correct header
+        Authorization: `Bearer ${accessToken}`
       }
     });
 
@@ -85,3 +86,4 @@ export const createPayment = async (userId, amount) => {
     return { success: false, message: err.response?.data?.message || "Payment initiation failed" };
   }
 };
+
