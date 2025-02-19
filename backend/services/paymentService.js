@@ -1,5 +1,3 @@
-// paymentService.js
-
 import axios from "axios";
 import dotenv from "dotenv";
 
@@ -8,10 +6,9 @@ dotenv.config();
 const {
   PHONEPE_CLIENT_ID,
   PHONEPE_CLIENT_SECRET,
-  PHONEPE_CLIENT_VERSION, // ✅ Added client version
+  PHONEPE_MERCHANT_ID,
   PHONEPE_BASE_URL,
-  FRONTEND_URL,
-  BACKEND_URL
+  FRONTEND_URL
 } = process.env;
 
 /**
@@ -22,8 +19,7 @@ export const getAccessToken = async () => {
   const payload = new URLSearchParams({
     client_id: PHONEPE_CLIENT_ID,
     client_secret: PHONEPE_CLIENT_SECRET,
-    grant_type: "client_credentials",
-    client_version: PHONEPE_CLIENT_VERSION // ✅ Included client_version
+    grant_type: "client_credentials"
   });
 
   try {
@@ -45,25 +41,18 @@ export const createPayment = async (userId, amount) => {
   try {
     const accessToken = await getAccessToken();
     const transactionId = `TXN_${userId}_${Date.now()}`;
-    const apiEndpoint = "/pg/v1/pay";  // ✅ Updated endpoint
+    const apiEndpoint = "/checkout/v2/pay";
 
     const payload = {
-      merchantId: process.env.PHONEPE_MERCHANT_ID,        // ✅ Required field
-      merchantOrderId: transactionId,                     // ✅ Required field
-      merchantUserId: userId,                             // ✅ Required field
-      amount: amount * 100,                               // Amount in paise
-      expireAfter: 900,                                   // Payment expiry in seconds
-      merchantUrls: {                                     // ✅ Correct placement
-        redirectUrl: `${FRONTEND_URL}/payment-success?txnId=${transactionId}`,
-        callbackUrl: `${BACKEND_URL}/api/payment/webhook`
-      },
-      paymentInstrument: {                                // ✅ Corrected placement
-        type: "PG_CHECKOUT"
-      },
-      metaInfo: JSON.stringify({                          // ✅ Stringify metaInfo
-        udf1: userId,
-        udf2: "HackEx Payment"
-      })
+      merchantOrderId: transactionId,
+      amount: amount * 100,  // Amount in paise
+      paymentFlow: {
+        type: "PG_CHECKOUT",
+        message: "HackEx Payment Request",
+        merchantUrls: {
+          redirectUrl: `${FRONTEND_URL}/payment-success?txnId=${transactionId}`
+        }
+      }
     };
 
     console.log("📡 Sending Payment Request to PhonePe...");
@@ -72,7 +61,7 @@ export const createPayment = async (userId, amount) => {
     const response = await axios.post(`${PHONEPE_BASE_URL}${apiEndpoint}`, payload, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`           // ✅ Ensure proper Bearer token
+        Authorization: `O-Bearer ${accessToken}`
       }
     });
 
@@ -88,4 +77,3 @@ export const createPayment = async (userId, amount) => {
     return { success: false, message: err.response?.data?.message || "Payment initiation failed" };
   }
 };
-
