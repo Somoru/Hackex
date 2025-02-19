@@ -62,7 +62,7 @@ export const createPayment = async (userId, amount) => {
     const response = await axios.post(`${PHONEPE_BASE_URL}${apiEndpoint}`, payload, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `O-Bearer ${accessToken}`
+        Authorization: `Bearer ${accessToken}`
       }
     });
 
