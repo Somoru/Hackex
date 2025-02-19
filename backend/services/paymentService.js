@@ -15,7 +15,7 @@ const {
  * 🔑 Get Access Token from PhonePe
  */
 export const getAccessToken = async () => {
-  const tokenUrl = `${PHONEPE_BASE_URL}/v1/oauth/token`;
+  const tokenUrl = `${PHONEPE_BASE_URL}/identity-manager/v1/oauth/token`;
   const payload = new URLSearchParams({
     client_id: PHONEPE_CLIENT_ID,
     client_secret: PHONEPE_CLIENT_SECRET,
@@ -42,7 +42,7 @@ export const createPayment = async (userId, amount) => {
   try {
     const accessToken = await getAccessToken();
     const transactionId = `TXN_${userId}_${Date.now()}`;
-    const apiEndpoint = "/checkout/v2/pay";
+    const apiEndpoint = "/pg/checkout/v2/pay";
 
     const payload = {
       merchantOrderId: transactionId,
