@@ -1,7 +1,9 @@
+// paymentController.js
+
 import { createPayment } from "../services/paymentService.js";
 
 /**
- * Initiate a payment
+ * 🌐 Initiate Payment Controller
  */
 export const initiatePayment = async (req, res) => {
   const { userId, amount } = req.body;
@@ -12,25 +14,26 @@ export const initiatePayment = async (req, res) => {
 
   try {
     const paymentResponse = await createPayment(userId, amount);
+
     if (paymentResponse.success) {
-      return res.status(200).json(paymentResponse);
+      res.status(200).json(paymentResponse);
     } else {
-      return res.status(500).json(paymentResponse);
+      res.status(500).json(paymentResponse);
     }
   } catch (err) {
-    console.error("❌ Error in initiatePayment:", err.message);
+    console.error("❌ initiatePayment Error:", err.message);
     res.status(500).json({ success: false, message: "Internal server error." });
   }
 };
 
 /**
- * Handle webhook callback from PhonePe
+ * 🔔 Webhook Callback Handler
  */
 export const handleWebhook = (req, res) => {
   const webhookData = req.body;
   console.log("🔔 Webhook Received:", JSON.stringify(webhookData, null, 2));
 
-  // TODO: Verify the signature and update payment status in DB.
+  // TODO: Verify signature and update payment status in your database.
 
   res.status(200).send("Webhook received");
 };
