@@ -8,7 +8,7 @@ dotenv.config();
 const {
   PHONEPE_CLIENT_ID,
   PHONEPE_CLIENT_SECRET,
-  PHONEPE_MERCHANT_ID,
+  PHONEPE_CLIENT_VERSION, // ✅ Added client version
   PHONEPE_BASE_URL,
   FRONTEND_URL,
   BACKEND_URL
@@ -22,7 +22,8 @@ export const getAccessToken = async () => {
   const payload = new URLSearchParams({
     client_id: PHONEPE_CLIENT_ID,
     client_secret: PHONEPE_CLIENT_SECRET,
-    grant_type: "client_credentials"
+    grant_type: "client_credentials",
+    client_version: PHONEPE_CLIENT_VERSION // ✅ Included client_version
   });
 
   try {
@@ -68,7 +69,7 @@ export const createPayment = async (userId, amount) => {
     const response = await axios.post(`${PHONEPE_BASE_URL}${apiEndpoint}`, payload, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `O-Bearer ${accessToken}`
+        Authorization: `Bearer ${accessToken}` // ✅ Correct header
       }
     });
 
