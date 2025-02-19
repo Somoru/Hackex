@@ -19,6 +19,7 @@ export const getAccessToken = async () => {
   const payload = new URLSearchParams({
     client_id: PHONEPE_CLIENT_ID,
     client_secret: PHONEPE_CLIENT_SECRET,
+    client_version: "1",
     grant_type: "client_credentials"
   });
 
