@@ -1,3 +1,8 @@
+// authService.js
+
+/**
+ * ✅ Check if a username is available
+ */
 export const checkUsernameExists = async (username) => {
   try {
     console.log("🔍 Checking username availability:", username);
@@ -7,7 +12,7 @@ export const checkUsernameExists = async (username) => {
 
     console.log("✅ Username check response:", data);
     if (!response.ok) throw new Error(data.message);
-    
+
     return data.available;
   } catch (error) {
     console.error("❌ Error checking username:", error);
@@ -15,6 +20,9 @@ export const checkUsernameExists = async (username) => {
   }
 };
 
+/**
+ * 📩 Request OTP for Signup
+ */
 export const requestOTP = async (username, email, password) => {
   try {
     console.log("🔍 Sending OTP request with data:", { username, email, password });
@@ -30,13 +38,16 @@ export const requestOTP = async (username, email, password) => {
 
     if (!response.ok) throw new Error(data.message);
 
-    return { message: "OTP Sent", expiresIn: data.expiresIn }; // Return OTP expiry time from backend
+    return { message: "OTP Sent", expiresIn: data.expiresIn };
   } catch (error) {
     console.error("❌ Error requesting OTP:", error);
     throw error;
   }
 };
 
+/**
+ * 🔄 Resend OTP
+ */
 export const resendOTP = async (email) => {
   try {
     console.log("🔍 Resending OTP for:", email);
@@ -59,6 +70,9 @@ export const resendOTP = async (email) => {
   }
 };
 
+/**
+ * ✅ Verify OTP and register the user
+ */
 export const verifyOTP = async (email, otp, username, password) => {
   try {
     console.log("🔍 Sending OTP Verification Request:", { email, otp, username, password });
@@ -73,6 +87,10 @@ export const verifyOTP = async (email, otp, username, password) => {
     console.log("✅ OTP verification response:", data);
 
     if (!response.ok) throw new Error(data.message);
+
+    // ✅ Save token with proper "Bearer" prefix
+    localStorage.setItem("authToken", `Bearer ${data.token}`);
+
     return data.token;
   } catch (error) {
     console.error("❌ OTP Verification Error:", error);
@@ -80,6 +98,9 @@ export const verifyOTP = async (email, otp, username, password) => {
   }
 };
 
+/**
+ * 🧾 Get User Payment Status
+ */
 export const getUserStatus = async () => {
   try {
     const token = localStorage.getItem("authToken");
@@ -89,7 +110,7 @@ export const getUserStatus = async () => {
 
     const response = await fetch("https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status", {
       method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: token },
     });
 
     const data = await response.json();
@@ -103,28 +124,30 @@ export const getUserStatus = async () => {
   }
 };
 
+/**
+ * 🔑 Login User and Store JWT Token
+ */
 export const loginUser = async (email, password) => {
   try {
-      console.log("🔍 Sending Login Request:", { email, password });
+    console.log("🔍 Sending Login Request:", { email, password });
 
-      const response = await fetch("https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-      });
+    const response = await fetch("https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-      const data = await response.json();
-      console.log("✅ Login response:", data);
+    const data = await response.json();
+    console.log("✅ Login response:", data);
 
-      if (!response.ok) throw new Error(data.message);
+    if (!response.ok) throw new Error(data.message);
 
-      // ✅ Store token in correct format
-      localStorage.setItem("authToken", `Bearer ${data.token}`);
+    // ✅ Save token with Bearer prefix
+    localStorage.setItem("authToken", `Bearer ${data.token}`);
 
-      return data.token;
+    return data.token;
   } catch (error) {
-      console.error("❌ Login Error:", error);
-      throw error;
+    console.error("❌ Login Error:", error);
+    throw error;
   }
 };
-
