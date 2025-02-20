@@ -1,39 +1,32 @@
-// paymentController.js
+import { initiatePayment } from "../services/paymentService.js";
 
-import { createPayment } from "../services/paymentService.js";
-
-/**
- * 🌐 Initiate Payment Controller
- */
-export const initiatePayment = async (req, res) => {
+export const initiatePaymentHandler = async (req, res) => {
   const { userId, amount } = req.body;
+  console.log("📦 Received Body:", req.body);
 
-  if (!userId || !amount) {
-    return res.status(400).json({ success: false, message: "User ID and amount are required." });
-  }
+  if (!userId || !amount) return res.status(400).json({ message: "User ID and amount are required." });
 
   try {
-    const paymentResponse = await createPayment(userId, amount);
-
-    if (paymentResponse.success) {
-      res.status(200).json(paymentResponse);
-    } else {
-      res.status(500).json(paymentResponse);
-    }
+    const { success, redirectUrl } = await initiatePayment(userId, amount);
+    return success ? res.json({ success, redirectUrl }) : res.status(500).json({ message: "Payment initiation failed." });
   } catch (err) {
-    console.error("❌ initiatePayment Error:", err.message);
-    res.status(500).json({ success: false, message: "Internal server error." });
+    console.error("🔥 Error in initiatePaymentHandler:", err.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
+
 /**
- * 🔔 Webhook Callback Handler
+ * 📊 Order Status Handler
  */
-export const handleWebhook = (req, res) => {
-  const webhookData = req.body;
-  console.log("🔔 Webhook Received:", JSON.stringify(webhookData, null, 2));
+export const orderStatusHandler = async (req, res) => {
+  const { orderId } = req.params;
 
-  // TODO: Verify signature and update payment status in your database.
-
-  res.status(200).send("Webhook received");
+  try {
+    const status = await checkOrderStatus(orderId);
+    res.json(status);
+  } catch (err) {
+    console.error("🔥 Order Status Error:", err.message);
+    res.status(500).json({ message: "Failed to check payment status." });
+  }
 };
