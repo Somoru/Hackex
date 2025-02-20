@@ -314,7 +314,7 @@ const Home = () => {
       {
         question: "What is the entry fee?",
         answer:
-          "HackEx requires a ₹50 entry fee per week. However, the first week has an early bird offer where you can join for just ₹35!",
+          "HackEx requires a ₹50 entry fee per week. However, the first week has an early bird offer where you can join for just ₹39!",
       },
       {
         question: "How are rewards distributed?",

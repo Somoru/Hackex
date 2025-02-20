@@ -3,7 +3,7 @@ import axios from "axios";
 
 const PaymentForm = ({ onClose }) => {
     const [userId, setUserId] = useState(null);
-    const [amount, setAmount] = useState(35); // Default entry fee
+    const [amount, setAmount] = useState(39); // Default entry fee
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

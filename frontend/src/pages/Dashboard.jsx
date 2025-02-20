@@ -61,9 +61,9 @@ const Dashboard = () => {
                         <div className="w-full max-w-2xl bg-gray-800 bg-opacity-40 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-gray-700">
                             <ChallengeCard
                                 title="💡 Weekly Coding Challenge"
-                                startDate="Feb 8"
-                                endDate="Feb 15"
-                                entryFee="₹35"
+                                startDate="Mar 5 "
+                                endDate="Mar 12"
+                                entryFee="₹39"
                                 paymentStatus={paymentStatus} // ✅ Pass payment status
                             />
                         </div>
