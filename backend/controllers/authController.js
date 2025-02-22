@@ -78,7 +78,14 @@ export const verifyOTP = async (req, res) => {
 
     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-    res.cookie("token", token, { httpOnly: true, secure: true });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
+      path: "/",
+      domain: ".hackex.in",
+    });
+    
     res.json({ message: "User verified successfully", token });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
@@ -126,14 +133,16 @@ export const login = async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // ✅ Secure only in production
-      sameSite: "None",                              // ✅ Needed for cross-origin cookies
-    });
-    
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "None",
+  path: "/",
+  domain: ".hackex.in",
+});
 
-    res.json({ message: "Login successful", token });
+res.json({ message: "Login successful", token });
+
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
@@ -148,7 +157,9 @@ export const logout = async (req, res) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: "None",
     path: "/",
+    domain: ".hackex.in", // ✅ Ensure cookie is cleared across subdomains
   });
+  
   res.json({ message: "Logged out successfully" });
   
 };
