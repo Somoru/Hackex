@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const API = `${import.meta.env.VITE_BACKEND_URL}/api/payment`;
+
 
 export const initiatePayment = async (amount) => {
-  const { data } = await axios.post(`${API}/initiate`, { amount }, { withCredentials: true });
+  const { data } = await axios.post(`https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/auth/api/initiate`, { amount }, { withCredentials: true });
   return data;
 };
