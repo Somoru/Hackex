@@ -19,6 +19,7 @@ connectDB(); // ✅ Connect to MongoDB
 const allowedOrigins = [
   "http://localhost:3000",  // 🔍 Local frontend
   "http://localhost:5173",  // 🔍 Vite local frontend
+  "http://localhost:5174",
   "https://hackex.in",      // 🌐 Production frontend
   "https://www.hackex.in"   // 🌐 Production with www
 ];

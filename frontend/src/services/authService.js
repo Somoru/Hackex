@@ -109,39 +109,47 @@ export const verifyOTP = async (email, otp, username, password) => {
 };
 
 /**
- * 🧾 Get User Payment Status
+ * 🧾 Get User Payment Status (using Authorization header)
  */
 export const getUserStatus = async () => {
   try {
     console.log("🔍 Fetching user status...");
 
+    const token = localStorage.getItem("authToken"); // ✅ Get token from localStorage
+
+    if (!token) {
+      console.warn("⚠️ No token found. User not authenticated.");
+      return null;
+    }
+
     const response = await fetch(
       "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status",
-     //const response = await fetch(
-      //"http://localhost:8080/api/auth/user-status",
       {
         method: "GET",
-        credentials: "include", // ✅ Include cookies instead of Authorization header
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ✅ Send token in Authorization header
+        },
       }
     );
 
     if (response.status === 401) {
-      console.warn("⚠️ Unauthorized: No valid token.");
-      return null; // ✅ Return null instead of throwing
+      console.warn("⚠️ Unauthorized: Invalid or expired token.");
+      return null;
     }
 
     const data = await response.json();
     console.log("✅ User status response:", data);
 
-    return data; // Return { username, paymentStatus }
+    return data; // ✅ Return { username, paymentStatus }
   } catch (error) {
     console.error("❌ Error fetching user status:", error);
-    return null; // ✅ Return null on error
+    return null;
   }
 };
 
 /**
- * 🔑 Login User and Store JWT Token (via cookies)
+ * 🔑 Login User and Store JWT Token (in localStorage)
  */
 export const loginUser = async (email, password) => {
   try {
@@ -150,12 +158,8 @@ export const loginUser = async (email, password) => {
     const response = await fetch(
       "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/login",
       {
-        //const response = await fetch(
-          //"http://localhost:8080/api/auth/login",
-          //{
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // ✅ Include cookies for authentication
         body: JSON.stringify({ email, password }),
       }
     );
@@ -165,9 +169,13 @@ export const loginUser = async (email, password) => {
 
     if (!response.ok) throw new Error(data.message);
 
-    return data.token; // ✅ No need to store manually; cookie is already set
+    // ✅ Save token to localStorage
+    localStorage.setItem("authToken", data.token);
+
+    return data.token;
   } catch (error) {
     console.error("❌ Login Error:", error);
     throw error;
   }
 };
+
