@@ -1,14 +1,9 @@
 import React from "react";
 
-const Button = ({ label, onClick, className }) => {
-  return (
-    <button
-      onClick={onClick}
-      className={`px-6 py-3 text-lg font-semibold rounded-xl bg-cyan-500 hover:bg-cyan-600 transition duration-300 ${className}`}
-    >
-      {label}
-    </button>
-  );
-};
+const Button = ({ label, onClick, className }) => (
+  <button onClick={onClick} className={`py-3 px-6 bg-cyan-500 rounded-lg text-black font-bold shadow-md ${className}`}>
+    {label}
+  </button>
+);
 
 export default Button;
