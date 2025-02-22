@@ -13,7 +13,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       const response = await fetch(
-        "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/logout",
+        "http://localhost:8080/api/auth/logout",
         {
           method: "POST",
           credentials: "include", // ✅ Include cookies

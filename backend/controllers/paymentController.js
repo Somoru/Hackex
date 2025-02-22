@@ -1,8 +1,12 @@
 import { initiatePayment } from "../services/paymentService.js";
+import { authenticateUser } from "../middlewares/authMiddleware.js";
 
+/**
+ * 💳 Initiate Payment Handler
+ */
 export const initiatePaymentHandler = async (req, res) => {
-  const { userId, amount } = req.body;
-  console.log("📦 Received Body:", req.body);
+  const { amount } = req.body;
+  const userId = req.user?.userId; // ✅ Extract userId from authenticated user
 
   if (!userId || !amount) return res.status(400).json({ message: "User ID and amount are required." });
 
@@ -12,21 +16,5 @@ export const initiatePaymentHandler = async (req, res) => {
   } catch (err) {
     console.error("🔥 Error in initiatePaymentHandler:", err.message);
     res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-
-/**
- * 📊 Order Status Handler
- */
-export const orderStatusHandler = async (req, res) => {
-  const { orderId } = req.params;
-
-  try {
-    const status = await checkOrderStatus(orderId);
-    res.json(status);
-  } catch (err) {
-    console.error("🔥 Order Status Error:", err.message);
-    res.status(500).json({ message: "Failed to check payment status." });
   }
 };

@@ -8,7 +8,7 @@ router.get("/check-username", checkUsername);
 router.post("/signup", signup);
 router.post("/verify-otp", verifyOTP);
 router.post("/login", login);
-router.post("/logout", authenticateUser, logout);
+router.post("/logout", logout);
 router.post("/resend-otp", resendOTP);
 router.get("/user-status", authenticateUser, getUserStatus);
 

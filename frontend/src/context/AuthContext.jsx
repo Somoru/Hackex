@@ -1,4 +1,3 @@
-// AuthContext.jsx
 import React, { createContext, useState, useEffect } from "react";
 import { getUserStatus } from "../services/authService";
 
@@ -13,19 +12,15 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      try {
-        const userStatus = await getUserStatus();
-        setIsAuthenticated(!!userStatus); // ✅ Set authenticated state if userStatus exists
-      } catch {
-        setIsAuthenticated(false); // 🚫 Unauthorized or no token
-      }
+      const userStatus = await getUserStatus();
+      setIsAuthenticated(!!userStatus);
     };
 
-    checkAuth(); // ✅ Call inside useEffect of a functional component
+    checkAuth();
   }, []);
 
-  const login = () => setIsAuthenticated(true);   // ✅ Call after successful login/signup
-  const logout = () => setIsAuthenticated(false); // ✅ Call after logout
+  const login = () => setIsAuthenticated(true);
+  const logout = () => setIsAuthenticated(false);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
@@ -33,3 +28,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+export default AuthProvider; // ✅ Add default export for consistency

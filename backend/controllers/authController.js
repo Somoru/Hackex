@@ -126,7 +126,12 @@ export const login = async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-    res.cookie("token", token, { httpOnly: true, secure: true });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // ✅ Secure only in production
+      sameSite: "None",                              // ✅ Needed for cross-origin cookies
+    });
+    
 
     res.json({ message: "Login successful", token });
   } catch (error) {
@@ -142,10 +147,10 @@ export const logout = async (req, res) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "None",
+    path: "/",
   });
   res.json({ message: "Logged out successfully" });
   
-  res.json({ message: "Logged out successfully" });
 };
 
 
@@ -154,9 +159,10 @@ export const logout = async (req, res) => {
  */
 export const getUserStatus = async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(req.user.userId); // ✅ Extracted from JWT middleware
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    // ✅ No need to set cookies here
     res.json({
       username: user.username,
       email: user.email,
@@ -167,3 +173,4 @@ export const getUserStatus = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+

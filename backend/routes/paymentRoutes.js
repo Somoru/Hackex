@@ -1,9 +1,9 @@
 import express from "express";
-import { initiatePaymentHandler, orderStatusHandler } from "../controllers/paymentController.js";
+import { initiatePaymentHandler } from "../controllers/paymentController.js";
+import { authenticateUser } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/initiate", initiatePaymentHandler);     // 🚀 Initiate payment
-router.get("/status/:orderId", orderStatusHandler);  // 📊 Check order status
+router.post("/initiate", authenticateUser, initiatePaymentHandler); // ✅ Protected route
 
 export default router;
