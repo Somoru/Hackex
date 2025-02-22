@@ -85,24 +85,30 @@ export const verifyOTP = async (req, res) => {
   }
 };
 
-router.post("/resend-otp", async (req, res) => {
+/**
+ * ✅ Resend OTP Controller
+ */
+export const resendOTP = async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required" });
 
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // Valid for 5 mins
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
-    await OTP.findOneAndUpdate({ email }, { otp: otpCode, expiresAt }, { upsert: true });
+    await OTP.findOneAndUpdate(
+      { email },
+      { otp: otpCode, expiresAt },
+      { upsert: true }
+    );
 
-    await sendOTP(email, otpCode); // ✅ Send the new OTP
-
+    await sendOTP(email, otpCode); // ✅ Send the OTP email
     res.json({ message: "OTP resent successfully", expiresIn: 300 });
   } catch (error) {
     console.error("Error resending OTP:", error);
     res.status(500).json({ message: "Failed to resend OTP" });
   }
-});
+};
 
 /**
  * ✅ User Login
@@ -138,10 +144,9 @@ export const logout = async (req, res) => {
 
 
 /**
- * ✅ GET /api/auth/user-status
- * 🔐 Requires JWT token stored in cookies.
+ * ✅ Get User Status Controller
  */
-router.get("/user-status", authenticateUser, async (req, res) => {
+export const getUserStatus = async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -155,4 +160,4 @@ router.get("/user-status", authenticateUser, async (req, res) => {
     console.error("Error fetching user status:", error);
     res.status(500).json({ message: "Internal server error" });
   }
-});
+};
