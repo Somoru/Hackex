@@ -1,5 +1,8 @@
 // authService.js
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
+export const useAuth = () => useContext(AuthContext);
 /**
  * ✅ Check if a username is available
  */
@@ -119,48 +122,49 @@ export const getUserStatus = async () => {
       "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status",
       {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ✅ Correct format with "Bearer "
-        },
-        credentials: "include", // ✅ Include cookies instead of Authorization header
+        credentials: "include", // ✅ Include cookies
       }
     );
+
+    if (response.status === 401) {
+      console.warn("⚠️ Unauthorized: No valid token.");
+      return null; // ✅ Return null to handle unauthenticated users
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to fetch user status.");
+    }
 
     const data = await response.json();
     console.log("✅ User status response:", data);
 
-    if (!response.ok) throw new Error(data.message);
-    return data.hasPaid;
+    return data; // ✅ { username, paymentStatus }
   } catch (error) {
     console.error("❌ Error fetching user status:", error);
-    return false;
+    return null; // ✅ Return null for error cases
   }
 };
 
+
 /**
- * 🔑 Login User and Store JWT Token (via cookies)
+ * 🔑 Login User
  */
 export const loginUser = async (email, password) => {
+  const { login } = useAuth();
+
   try {
-    console.log("🔍 Sending Login Request:", { email, password });
+    const response = await fetch("https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email, password }),
+    });
 
-    const response = await fetch(
-      "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/login",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // ✅ Include cookies for authentication
-        body: JSON.stringify({ email, password }),
-      }
-    );
+    if (!response.ok) throw new Error("Login failed");
 
-    const data = await response.json();
-    console.log("✅ Login response:", data);
-
-    if (!response.ok) throw new Error(data.message);
-
-    return data.token; // ✅ No need to store manually; cookie is already set
+    login(); // ✅ Update context
+    return await response.json();
   } catch (error) {
     console.error("❌ Login Error:", error);
     throw error;

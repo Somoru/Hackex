@@ -1,17 +1,15 @@
 import jwt from "jsonwebtoken";
 
 export const authenticateUser = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies?.token; // ✅ Get token from cookies
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!token) {
     return res.status(401).json({ message: "Unauthorized: No token provided" });
   }
 
-  const token = authHeader.split(" ")[1]; // ✅ Extract token after "Bearer"
-
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // ✅ Attach decoded user to request
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // ✅ Verify token
+    req.user = decoded;
     next();
   } catch (error) {
     console.error("❌ Token verification failed:", error.message);

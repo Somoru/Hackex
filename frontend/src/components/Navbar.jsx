@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { AuthContext } from "../context/AuthContext";
-import "../styles/Navbar.css";  // ✅ Import the CSS file
+import "../styles/Navbar.css";
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
@@ -10,11 +10,30 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // ✅ Detect scroll position to shrink navbar
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(
+        "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/logout",
+        {
+          method: "POST",
+          credentials: "include", // ✅ Ensure cookies are sent
+        }
+      );
+
+      if (response.ok) {
+        logout(); // ✅ Update AuthContext
+        navigate("/login"); // 🚀 Redirect after logout
+      } else {
+        console.error("❌ Logout failed:", await response.json());
+      }
+    } catch (error) {
+      console.error("❌ Logout error:", error);
+    }
+  };
+
+  // ✅ Detect scroll to apply navbar styles
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -33,17 +52,11 @@ const Navbar = () => {
         {/* Desktop Navigation Links */}
         <div className="nav-links">
           <Link to="/" className="nav-item">Home</Link>
-
           {isAuthenticated ? (
             <>
               <Link to="/dashboard" className="nav-item">Dashboard</Link>
               <Link to="/leaderboard" className="nav-item">Leaderboard</Link>
-              <button 
-                onClick={() => { logout(); navigate("/"); }} 
-                className="logout-btn"
-              >
-                Logout
-              </button>
+              <button onClick={handleLogout} className="logout-btn">Logout</button>
             </>
           ) : (
             <>
@@ -53,27 +66,22 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu */}
         <div className="menu-button" onClick={() => setMenuOpen(!menuOpen)}>
           <div className={`bar ${menuOpen ? "open" : ""}`}></div>
           <div className={`bar ${menuOpen ? "open" : ""}`}></div>
           <div className={`bar ${menuOpen ? "open" : ""}`}></div>
         </div>
 
-        {/* Mobile Navigation Menu */}
         <div className={`mobile-menu ${menuOpen ? "active" : ""}`}>
           <div className="close-button" onClick={() => setMenuOpen(false)}>✖</div>
-          
           <Link to="/" className="mobile-nav-item" onClick={() => setMenuOpen(false)}>Home</Link>
 
           {isAuthenticated ? (
             <>
               <Link to="/dashboard" className="mobile-nav-item" onClick={() => setMenuOpen(false)}>Dashboard</Link>
               <Link to="/leaderboard" className="mobile-nav-item" onClick={() => setMenuOpen(false)}>Leaderboard</Link>
-              <button 
-                onClick={() => { logout(); navigate("/"); setMenuOpen(false); }} 
-                className="mobile-logout-btn"
-              >
+              <button onClick={() => { handleLogout(); setMenuOpen(false); }} className="mobile-logout-btn">
                 Logout
               </button>
             </>

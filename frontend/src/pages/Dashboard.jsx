@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ChallengeCard from "../components/ChallengeCard";
+import { getUserStatus } from "../services/authService";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -8,27 +9,22 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        const response = await fetch(
-          "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status",
-          { method: "GET", credentials: "include" } // ✅ Include cookies for auth
-        );
-
-        if (!response.ok) throw new Error("Unauthorized");
-
-        const data = await response.json();
-        setUser(data.username);
-        setPaymentStatus(data.paymentStatus);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        window.location.href = "/signup"; // 🚀 Redirect if not authenticated
-      } finally {
-        setLoading(false);
+      const userData = await getUserStatus();
+  
+      if (!userData) {
+        console.warn("🚫 User not authenticated. Redirecting...");
+        window.location.href = "/signup"; // 🚀 Redirect if no user data
+        return;
       }
+  
+      setUser(userData.username);
+      setPaymentStatus(userData.paymentStatus);
+      setLoading(false);
     };
-
+  
     fetchUserData();
   }, []);
+  
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white p-6 pt-24">

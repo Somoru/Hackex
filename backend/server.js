@@ -9,6 +9,7 @@ import executionRoutes from "./routes/executionRoutes.js";
 import questionRoutes from "./routes/questionRoutes.js";
 import LeaderboardRoutes from "./routes/leaderboardRoutes.js";
 import cron from "node-cron";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
@@ -36,7 +37,7 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,  // ✅ Allow cookies
 };
-
+app.use(cookieParser());
 // ✅ Apply Middlewares
 app.use(cors(corsOptions));            // 🌐 Handle CORS
 app.options("*", cors(corsOptions));    // 🌐 Handle preflight requests
