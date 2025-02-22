@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import OTP from "../models/OTP.js";
 import { sendOTP, sendWelcomeEmail } from "../utils/sendEmail.js";
+import { authenticateUser } from "../middlewares/authMiddleware.js";
 
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -135,7 +136,12 @@ export const logout = async (req, res) => {
   res.json({ message: "Logged out successfully" });
 };
 
-router.get("/user-status", authenticateToken, async (req, res) => {
+
+/**
+ * ✅ GET /api/auth/user-status
+ * 🔐 Requires JWT token stored in cookies.
+ */
+router.get("/user-status", authenticateUser, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -146,6 +152,7 @@ router.get("/user-status", authenticateToken, async (req, res) => {
       paymentStatus: user.hasPaid ? "Verified" : "Pending",
     });
   } catch (error) {
+    console.error("Error fetching user status:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
