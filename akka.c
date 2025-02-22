@@ -27,7 +27,7 @@ void performInsertionSort(int array[], int size, int showPasses) {
         array[j + 1] = current;
 
         if (showPasses) {
-            printf("After pass %d: ", i);
+            printf("Pass %d: ", i);
             displayArray(array, size);
         }
     }
@@ -46,7 +46,7 @@ void performSelectionSort(int array[], int size, int showPasses) {
             array[minIndex] = temp;
         }
         if (showPasses) {
-            printf("After pass %d: ", i + 1);
+            printf("Pass %d: ", i + 1);
             displayArray(array, size);
         }
     }
@@ -63,7 +63,7 @@ void performBubbleSort(int array[], int size, int showPasses) {
             }
         }
         if (showPasses) {
-            printf("After pass %d: ", i + 1);
+            printf("Pass %d: ", i + 1);
             displayArray(array, size);
         }
     }
@@ -143,33 +143,33 @@ int main() {
     int showSteps = 0;
     char choiceForSteps;
 
-    printf("How many elements do you want to sort? ");
+    printf("No.of elements do you want to sort? ");
     scanf("%d", &elementCount);
 
     if (elementCount <= 0 || elementCount > MAX_SIZE) {
-        printf("Error: Enter a valid number of elements (1-%d).\n", MAX_SIZE);
+        printf("Error-Enter a valid number of elements (1-%d).\n", MAX_SIZE);
         return 1;
     }
 
-    printf("Enter the elements separated by spaces: ");
+    printf("Enter array elements(space-seperated): ");
     for (int i = 0; i < elementCount; i++) scanf("%d", &array[i]);
 
     printf("\nSorting Methods Available:\n");
-    printf("1 - Insertion Sort\n2 - Selection Sort\n3 - Bubble Sort\n4 - Quick Sort\n5 - Bucket Sort\nYour choice: ");
+    printf("1. Insertion Sort\n2. Selection Sort\n3. Bubble Sort\n4. Quick Sort\n5. Bucket Sort\n Enter your choice: ");
 
     int methodChoice;
     scanf("%d", &methodChoice);
 
     if (methodChoice < 1 || methodChoice > 5) {
-        printf("Invalid selection. Please restart and select a valid option.\n");
+        printf("Ooops!! its an invalid selection. Kindly select a valid option.\n");
         return 1;
     }
 
-    printf("Would you like to view intermediate steps? (y/n): ");
+    printf("Do you want to see all intermediate steps? (y/n): ");
     scanf(" %c", &choiceForSteps);
     showSteps = (choiceForSteps == 'y' || choiceForSteps == 'Y') ? 1 : 0;
 
-    printf("\nSorting in progress...\n");
+    printf("\nSorting in progress.......\n");
 
     if (methodChoice == 1) performInsertionSort(array, elementCount, showSteps);
     else if (methodChoice == 2) performSelectionSort(array, elementCount, showSteps);
@@ -177,8 +177,8 @@ int main() {
     else if (methodChoice == 4) executeQuickSort(array, 0, elementCount - 1, showSteps, elementCount);
     else performBucketSort(array, elementCount, showSteps);
 
-    printf("\nSorted Array: ");
+    printf("\n The Sorted Array is: ");
     displayArray(array, elementCount);
 
-    return 0;
+return 0;
 }
