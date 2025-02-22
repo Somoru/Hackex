@@ -84,6 +84,25 @@ export const verifyOTP = async (req, res) => {
   }
 };
 
+router.post("/resend-otp", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
+
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // Valid for 5 mins
+
+    await OTP.findOneAndUpdate({ email }, { otp: otpCode, expiresAt }, { upsert: true });
+
+    await sendOTP(email, otpCode); // ✅ Send the new OTP
+
+    res.json({ message: "OTP resent successfully", expiresIn: 300 });
+  } catch (error) {
+    console.error("Error resending OTP:", error);
+    res.status(500).json({ message: "Failed to resend OTP" });
+  }
+});
+
 /**
  * ✅ User Login
  */
@@ -115,3 +134,18 @@ export const logout = async (req, res) => {
   res.clearCookie("token");
   res.json({ message: "Logged out successfully" });
 };
+
+router.get("/user-status", authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json({
+      username: user.username,
+      email: user.email,
+      paymentStatus: user.hasPaid ? "Verified" : "Pending",
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
