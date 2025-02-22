@@ -119,6 +119,10 @@ export const getUserStatus = async () => {
       "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status",
       {
         method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ✅ Correct format with "Bearer "
+        },
         credentials: "include", // ✅ Include cookies instead of Authorization header
       }
     );
