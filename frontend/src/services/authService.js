@@ -1,8 +1,5 @@
 // authService.js
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
 
-export const useAuth = () => useContext(AuthContext);
 /**
  * ✅ Check if a username is available
  */
@@ -120,51 +117,55 @@ export const getUserStatus = async () => {
 
     const response = await fetch(
       "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status",
+     //const response = await fetch(
+      //"http://localhost:8080/api/auth/user-status",
       {
         method: "GET",
-        credentials: "include", // ✅ Include cookies
+        credentials: "include", // ✅ Include cookies instead of Authorization header
       }
     );
 
     if (response.status === 401) {
       console.warn("⚠️ Unauthorized: No valid token.");
-      return null; // ✅ Return null to handle unauthenticated users
-    }
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to fetch user status.");
+      return null; // ✅ Return null instead of throwing
     }
 
     const data = await response.json();
     console.log("✅ User status response:", data);
 
-    return data; // ✅ { username, paymentStatus }
+    return data; // Return { username, paymentStatus }
   } catch (error) {
     console.error("❌ Error fetching user status:", error);
-    return null; // ✅ Return null for error cases
+    return null; // ✅ Return null on error
   }
 };
 
-
 /**
- * 🔑 Login User
+ * 🔑 Login User and Store JWT Token (via cookies)
  */
 export const loginUser = async (email, password) => {
-  const { login } = useAuth();
-
   try {
-    const response = await fetch("https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ email, password }),
-    });
+    console.log("🔍 Sending Login Request:", { email, password });
 
-    if (!response.ok) throw new Error("Login failed");
+    const response = await fetch(
+      "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/login",
+      {
+        //const response = await fetch(
+          //"http://localhost:8080/api/auth/login",
+          //{
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // ✅ Include cookies for authentication
+        body: JSON.stringify({ email, password }),
+      }
+    );
 
-    login(); // ✅ Update context
-    return await response.json();
+    const data = await response.json();
+    console.log("✅ Login response:", data);
+
+    if (!response.ok) throw new Error(data.message);
+
+    return data.token; // ✅ No need to store manually; cookie is already set
   } catch (error) {
     console.error("❌ Login Error:", error);
     throw error;

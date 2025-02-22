@@ -15,13 +15,13 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       try {
         const userStatus = await getUserStatus();
-        setIsAuthenticated(!!userStatus); // ✅ If userStatus exists, user is authenticated
+        setIsAuthenticated(!!userStatus); // ✅ Set authenticated state if userStatus exists
       } catch {
         setIsAuthenticated(false); // 🚫 Unauthorized or no token
       }
     };
 
-    checkAuth();
+    checkAuth(); // ✅ Call inside useEffect of a functional component
   }, []);
 
   const login = () => setIsAuthenticated(true);   // ✅ Call after successful login/signup

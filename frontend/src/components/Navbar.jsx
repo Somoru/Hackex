@@ -16,20 +16,28 @@ const Navbar = () => {
         "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/logout",
         {
           method: "POST",
-          credentials: "include", // ✅ Ensure cookies are sent
+          credentials: "include", // ✅ Include cookies
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
-
+  
       if (response.ok) {
-        logout(); // ✅ Update AuthContext
-        navigate("/login"); // 🚀 Redirect after logout
+        logout();             // ✅ Clear frontend auth state
+        navigate("/login");   // 🚀 Redirect to login page
       } else {
-        console.error("❌ Logout failed:", await response.json());
+        const errorData = await response.json();
+        console.error("❌ Logout failed:", errorData.message);
+        alert(`Logout failed: ${errorData.message}`);
       }
     } catch (error) {
       console.error("❌ Logout error:", error);
+      alert("An error occurred during logout.");
     }
   };
+  
+  
 
   // ✅ Detect scroll to apply navbar styles
   useEffect(() => {

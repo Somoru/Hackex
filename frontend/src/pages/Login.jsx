@@ -17,7 +17,6 @@ const Login = () => {
     e.preventDefault();
     try {
       const token = await loginUser(formData.email, formData.password);
-      localStorage.setItem("authToken", token);
       navigate("/dashboard");
     } catch (err) {
       setError("Invalid credentials. Try again.");

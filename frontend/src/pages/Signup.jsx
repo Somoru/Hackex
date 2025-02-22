@@ -18,14 +18,19 @@ const Signup = () => {
   const [usernameAvailable, setUsernameAvailable] = useState(null);
   const navigate = useNavigate();
 
-  const handleChange = async (e) => {
+  let timeout;
+  const handleChange = (e) => {
+    clearTimeout(timeout);
     setFormData({ ...formData, [e.target.name]: e.target.value });
-
+  
     if (e.target.name === "username") {
-      const available = await checkUsernameExists(e.target.value);
-      setUsernameAvailable(available);
+      timeout = setTimeout(async () => {
+        const available = await checkUsernameExists(e.target.value);
+        setUsernameAvailable(available);
+      }, 500);  // ✅ Debounce for 500ms
     }
   };
+  
 
   const handleSignup = async (e) => {
     e.preventDefault();
