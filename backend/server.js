@@ -33,21 +33,21 @@ const corsOptions = {
       callback(new Error("CORS Not Allowed"));
     }
   },
-  methods: "GET,POST,PUT,DELETE,OPTIONS",
+  credentials: true,           // ✅ Allow cookies
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,  // ✅ Allow cookies
+  optionsSuccessStatus: 200,   // ✅ Fixes legacy browser preflight issues
 };
-app.use(cookieParser());
-// ✅ Apply Middlewares
-app.use(cors(corsOptions));            // 🌐 Handle CORS
-app.options("*", cors(corsOptions));    // 🌐 Handle preflight requests
-app.use(express.json());                // 📦 Parse JSON payloads
 
-// ✅ Request Logger (One Instance Only)
+// ✅ Apply Middlewares in Correct Order
+app.use(cookieParser());       // ✅ 1. Parse cookies first
+app.use(cors(corsOptions));    // ✅ 2. Apply CORS with credentials
+app.use(express.json());       // ✅ 3. Parse JSON payloads
+
+// ✅ Request Logger (Helpful for Debugging)
 app.use((req, res, next) => {
   console.log(`📡 ${req.method} ${req.originalUrl}`);
   console.log("🔑 Headers:", req.headers);
-  console.log("📦 Body:", req.body);
   next();
 });
 
@@ -65,9 +65,9 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: err.message || "Internal Server Error" });
 });
 
-// 🕒 CRON Jobs
-cron.schedule("0 0 * * 0", () => console.log("🔄 Weekly payment reset running...")); // Every Sunday at midnight
-cron.schedule("*/50 * * * *", () => console.log("🔄 Refreshing access token..."));    // Every 50 minutes
+// 🕒 CRON Jobs (For Background Tasks)
+cron.schedule("0 0 * * 0", () => console.log("🔄 Weekly payment reset running..."));
+cron.schedule("*/50 * * * *", () => console.log("🔄 Refreshing access token..."));
 
 // 🚀 Start Server
 const PORT = process.env.PORT || 5000;
