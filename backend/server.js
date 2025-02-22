@@ -70,6 +70,11 @@ app.use((err, req, res, next) => {
 cron.schedule("0 0 * * 0", () => console.log("🔄 Weekly payment reset running..."));
 cron.schedule("*/50 * * * *", () => console.log("🔄 Refreshing access token..."));
 
+app.get("/", (req, res) => {
+  res.status(200).send("✅ Server is running.");
+});
+
+
 // 🚀 Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, "0.0.0.0", () => console.log(`🚀 Server running on port ${PORT}`));
