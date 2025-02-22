@@ -11,7 +11,7 @@ const PaymentForm = ({ onClose }) => {
       try {
         console.log("🔍 Fetching user status...");
         const { data } = await axios.get(
-          "http://localhost:8080/api/auth/user-status",
+          "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status",
           {
             withCredentials: true, // ✅ Send cookies
           }
