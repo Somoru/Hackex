@@ -8,20 +8,35 @@ const PaymentForm = ({ onClose }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
+      const token = localStorage.getItem("authToken"); // ✅ Retrieve token inside useEffect
+
+      if (!token) {
+        alert("Authentication error. Please log in again.");
+        window.location.href = "/login";
+        return;
+      }
+
       try {
         console.log("🔍 Fetching user status...");
         const { data } = await axios.get(
-          "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status",
+          process.env.NODE_ENV === "production"
+            ? "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status"
+            : "http://localhost:5000/api/auth/user-status",
           {
-            withCredentials: true, // ✅ Send cookies
+            headers: {
+              Authorization: `Bearer ${token}`, // ✅ Use Authorization header
+            },
           }
         );
 
-        if (!data?.userId) throw new Error("User ID not found.");
-        setUserId(data.userId);
+        console.log("✅ User status fetched:", data);
+
+        if (!data?.username) throw new Error("User data not found."); // Adjust based on backend response
+        setUserId(data.username); // ✅ Set userId based on available data
       } catch (error) {
-        console.error("❌ Error fetching user:", error);
+        console.error("❌ Error fetching user:", error.response?.data?.message || error.message);
         alert("Authentication error. Please log in again.");
+        localStorage.removeItem("authToken");
         window.location.href = "/login";
       } finally {
         setLoading(false);
@@ -32,7 +47,9 @@ const PaymentForm = ({ onClose }) => {
   }, []);
 
   const handlePayment = async () => {
-    if (!userId) {
+    const token = localStorage.getItem("authToken"); // ✅ Retrieve token before payment
+
+    if (!userId || !token) {
       alert("Authentication error. Please log in again.");
       return;
     }
@@ -40,24 +57,27 @@ const PaymentForm = ({ onClose }) => {
     try {
       console.log("📡 Initiating Payment:", { userId, amount });
       const { data } = await axios.post(
-        "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/payment/initiate",
-        { userId, amount },
+        process.env.NODE_ENV === "production"
+          ? "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/payment/initiate"
+          : "http://localhost:5000/api/payment/initiate",
+        { amount }, // ✅ Pass only amount; user is derived from token on backend
         {
-          withCredentials: true, // ✅ Include cookies for authentication
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Send token in Authorization header
+          },
         }
       );
 
       if (data.success && data.redirectUrl) {
         alert("Redirecting to payment page...");
-        window.location.href = data.redirectUrl;
+        window.location.href = data.redirectUrl; // ✅ Redirect to payment gateway
       } else {
         console.error("❌ Payment initiation failed:", data.message);
         alert(`Payment initiation failed: ${data.message || "Unknown error"}`);
       }
     } catch (error) {
-      console.error("❌ Payment API Request Failed:", error);
-      const message = error.response?.data?.message || "Payment failed. Please try again.";
-      alert(message);
+      console.error("❌ Payment API Request Failed:", error.response?.data?.message || error.message);
+      alert("Payment failed. Please try again.");
     }
   };
 
@@ -72,7 +92,9 @@ const PaymentForm = ({ onClose }) => {
       ) : (
         <>
           <div className="mt-4 text-center">
-            <p className="text-gray-300"><strong>Entry Fee:</strong> ₹{amount}</p>
+            <p className="text-gray-300">
+              <strong>Entry Fee:</strong> ₹{amount}
+            </p>
           </div>
 
           <div className="flex justify-between mt-6">
