@@ -21,7 +21,26 @@ const Dashboard = () => {
       setPaymentStatus(userData.paymentStatus);
       setLoading(false);
     };
-  
+
+    const fetchPaymentStatus = async () => {
+      const token = localStorage.getItem("authToken");
+      if (!token) return;
+
+      try {
+        const { data } = await axios.get(
+          "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/payment/status",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (data.paymentStatus) {
+          setPaymentStatus(data.paymentStatus); // ✅ Update the paymentStatus state
+        }
+      } catch (error) {
+        console.error("❌ Error fetching payment status:", error);
+      }
+    };
+
+    fetchPaymentStatus(); // Fetch status on component mount
     fetchUserData();
   }, []);
   

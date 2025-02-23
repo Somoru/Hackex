@@ -173,11 +173,16 @@ export const getUserStatus = async (req, res) => {
     const user = await User.findById(req.user.userId); // ✅ Extracted from JWT middleware
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // ✅ No need to set cookies here
+    const statusMapping = {
+      SUCCESS: "Verified",
+      PENDING: "Pending",
+      FAILED: "Failed",
+    };
+
     res.json({
       username: user.username,
       email: user.email,
-      paymentStatus: user.hasPaid ? "Verified" : "Pending",
+      paymentStatus: statusMapping[user.paymentStatus] || "Pending", // ✅ Map DB status to frontend format
     });
   } catch (error) {
     console.error("Error fetching user status:", error);

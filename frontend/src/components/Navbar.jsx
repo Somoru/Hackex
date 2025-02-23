@@ -9,7 +9,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const token = localStorage.getItem("authToken");
   const handleLogout = async () => {
     try {
       const response = await fetch(
@@ -19,6 +19,7 @@ const Navbar = () => {
           credentials: "include", // ✅ Include cookies
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // ✅ Use Authorization
           },
         }
       );
