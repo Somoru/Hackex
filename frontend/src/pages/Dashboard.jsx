@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ChallengeCard from "../components/ChallengeCard";
 import { getUserStatus } from "../services/authService";
-
+import axios from "axios";
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState("Not Submitted");
