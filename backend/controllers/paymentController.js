@@ -1,79 +1,74 @@
-import { initiatePayment, updatePaymentStatus, getPaymentStatus } from "../services/paymentService.js";
+import { initiatePayment, updatePaymentStatus, getCurrentWeekPaymentStatus } from "../services/paymentService.js";
 import jwt from "jsonwebtoken";
 
 /**
- * 💳 Initiate Payment Handler (using Authorization header)
+ * 💳 Initiate Weekly Payment
  */
 export const initiatePaymentHandler = async (req, res) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Unauthorized: No token provided" });
-  }
-
-  const token = authHeader.split(" ")[1];
-
-  let decodedToken;
-  try {
-    decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (error) {
-    console.error("🚫 JWT Verification Failed:", error.message);
-    return res.status(401).json({ message: "Unauthorized: Invalid or expired token" });
-  }
-
-  const userId = decodedToken.userId;
-  const { amount } = req.body;
-
-  if (!userId || !amount) {
-    return res.status(400).json({ message: "User ID and amount are required." });
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
+    const { userId } = jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET);
+    const { amount } = req.body;
+
+    if (!amount) return res.status(400).json({ message: "Amount is required." });
+
     const { success, redirectUrl } = await initiatePayment(userId, amount);
-    return success
-      ? res.json({ success, redirectUrl })
-      : res.status(500).json({ message: "Payment initiation failed." });
+    res.json({ success, redirectUrl });
   } catch (err) {
-    console.error("🔥 Error in initiatePaymentHandler:", err.message);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error("❌ Payment initiation failed:", err.message);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
   }
 };
 
 /**
- * 🔔 Payment Webhook Handler (PhonePe callback)
+ * 🔔 Webhook to Update Payment Status
  */
 export const paymentWebhookHandler = async (req, res) => {
-  const { merchantOrderId, transactionStatus } = req.body;
+  const { merchantOrderId, transactionId, transactionStatus } = req.body;
 
   if (!merchantOrderId || !transactionStatus) {
     return res.status(400).json({ message: "Invalid webhook data." });
   }
 
   try {
-    await updatePaymentStatus(merchantOrderId, transactionStatus);
-    console.log(`✅ Payment status updated: ${merchantOrderId} -> ${transactionStatus}`);
-    res.status(200).json({ message: "Payment status updated." });
-  } catch (error) {
-    console.error("❌ Webhook handling failed:", error.message);
+    const updatedPayment = await updatePaymentStatus(merchantOrderId, transactionId, transactionStatus);
+    res.status(200).json({ message: "Payment status updated.", payment: updatedPayment });
+  } catch (err) {
+    console.error("❌ Webhook error:", err.message);
     res.status(500).json({ message: "Failed to update payment status." });
   }
 };
 
 /**
- * 🧾 Get Payment Status Handler
+ * 🧾 Get Current Week Payment Status
  */
 export const getPaymentStatusHandler = async (req, res) => {
-  const { orderId } = req.query;
+  const authHeader = req.headers.authorization;
 
-  if (!orderId) {
-    return res.status(400).json({ message: "Order ID is required." });
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
-    const status = await getPaymentStatus(orderId);
+    const { userId } = jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET);
+    const currentDate = new Date();
+    const showPendingAfterDate = new Date("2025-03-12T00:00:00Z"); // ✅ Replace with March 12th
+
+    let status = await getCurrentWeekPaymentStatus(userId);
+
+    // ✅ Override "Pending" with "Not Applicable" before March 12th
+    if (status === "PENDING" && currentDate < showPendingAfterDate) {
+      status = "Not Applicable";
+    }
+
     res.json({ paymentStatus: status });
-  } catch (error) {
-    console.error("❌ Error fetching payment status:", error.message);
+  } catch (err) {
+    console.error("❌ Error fetching payment status:", err.message);
     res.status(500).json({ message: "Failed to fetch payment status." });
   }
 };

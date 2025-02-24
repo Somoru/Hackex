@@ -58,19 +58,22 @@ const Dashboard = () => {
           </h1>
 
           <p className="text-lg text-gray-400">
-            <strong>Payment Status:</strong>{" "}
-            <span
-              className={`font-bold px-3 py-1 rounded-md ${
-                paymentStatus === "Verified"
-                  ? "bg-green-600 text-white"
-                  : paymentStatus === "Pending"
-                  ? "bg-yellow-500 text-black"
-                  : "bg-red-500 text-white"
-              }`}
-            >
-              {paymentStatus}
-            </span>
-          </p>
+  <strong>Payment Status:</strong>{" "}
+  <span
+    className={`font-bold px-3 py-1 rounded-md ${
+      paymentStatus === "Verified"
+        ? "bg-green-600 text-white"
+        : paymentStatus === "Pending"
+        ? "bg-yellow-500 text-black"
+        : paymentStatus === "Not Applicable"
+        ? "bg-gray-500 text-white"
+        : "bg-red-500 text-white"
+    }`}
+  >
+    {paymentStatus}
+  </span>
+</p>
+
 
           <div className="w-full flex flex-col items-center space-y-8">
             <h2 className="text-3xl font-bold text-yellow-400">🔥 Active Challenge</h2>

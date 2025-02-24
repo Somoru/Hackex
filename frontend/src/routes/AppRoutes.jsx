@@ -11,6 +11,7 @@ import TermsAndConditions from "../pages/TermsAndConditions";
 import RefundPolicy from "../pages/RefundPolicy";
 import AdminPanel from "../pages/AdminPanel";
 import AdminLogin from "../pages/AdminLogin";
+import PaymentSuccess from "../pages/PaymentSuccess";
 
 const AppRoutes = () => {
   const isAdminAuthenticated = !!localStorage.getItem("adminToken");
@@ -29,6 +30,7 @@ const AppRoutes = () => {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
         <Route path="/refund-policy" element={<RefundPolicy />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
 
         {/* ✅ Catch-All Route (Redirects unknown paths to Home) */}
         <Route path="*" element={<Navigate to="/" replace />} />
