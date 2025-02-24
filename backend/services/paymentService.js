@@ -3,6 +3,7 @@ import { getCurrentWeek } from "../utils/dateUtils.js";
 import axios from "axios";
 import dotenv from "dotenv";
 import User from "../models/User.js";
+import mongoose from "mongoose";
 dotenv.config();
 
 const {
