@@ -2,6 +2,7 @@ import Payment from "../models/Payment.js";
 import { getCurrentWeek } from "../utils/dateUtils.js";
 import axios from "axios";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 
 dotenv.config();
 
