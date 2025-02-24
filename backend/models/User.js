@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true, index: true },
   password: { type: String, required: true },
   isVerified: { type: Boolean, default: false },
+  hasPaid: { type: Boolean, default: false },
   paymentStatus: { type: String, enum: ["PENDING", "SUCCESS", "FAILED"], default: "PENDING" }
 });
 

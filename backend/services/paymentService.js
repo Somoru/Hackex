@@ -38,14 +38,21 @@ export const getAccessToken = async () => {
  * 💳 Initiate Weekly Payment
  */
 export const initiatePayment = async (userId, amount) => {
-  const accessToken = await getAccessToken();
-  const week = getCurrentWeek();
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    throw new Error("Invalid user ID.");
+  }
 
-  // ✅ Check if payment already exists for this week
-  const existingPayment = await Payment.findOne({ userId, week });
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found.");
 
-  if (existingPayment && existingPayment.status === "SUCCESS") {
-    throw new Error("Payment already completed for this week.");
+  const currentWeek = getCurrentWeek();
+  const paymentRecord = await Payment.findOne({ userId, week: currentWeek });
+
+  const restrictionDate = new Date("2025-03-14T00:00:00Z"); // 🚫 Restrict until March 14th
+  const now = new Date();
+
+  if (paymentRecord?.status === "SUCCESS" && now < restrictionDate) {
+    throw new Error("You have already paid. Payments will reopen on March 14th.");
   }
 
   const merchantOrderId = `TXN_${userId}_${Date.now()}`;
@@ -55,30 +62,19 @@ export const initiatePayment = async (userId, amount) => {
     paymentFlow: {
       type: "PG_CHECKOUT",
       merchantUrls: {
-        redirectUrl: `${FRONTEND_URL}/payment-success?orderId=${merchantOrderId}`,
+        redirectUrl: `${process.env.FRONTEND_URL}/payment-success?orderId=${merchantOrderId}`,
       },
     },
   };
 
-  try {
-    const { data } = await axios.post(`${PHONEPE_BASE_URL}/pg/checkout/v2/pay`, payload, {
-      headers: { "Content-Type": "application/json", Authorization: `O-Bearer ${accessToken}` },
-    });
+  // ✅ Save or update payment record
+  await Payment.findOneAndUpdate(
+    { userId, week: currentWeek },
+    { merchantOrderId, amount, status: "PENDING" },
+    { upsert: true, new: true }
+  );
 
-    if (!data.redirectUrl) throw new Error("Payment initiation failed.");
-
-    // ✅ Create or update the payment record
-    await Payment.findOneAndUpdate(
-      { userId, week },
-      { merchantOrderId, amount, status: "PENDING" },
-      { upsert: true, new: true }
-    );
-
-    return { success: true, redirectUrl: data.redirectUrl };
-  } catch (err) {
-    console.error("🔥 Payment initiation error:", err.message);
-    throw new Error("Payment initiation failed.");
-  }
+  return { success: true, redirectUrl: `${process.env.FRONTEND_URL}/payment-success?orderId=${merchantOrderId}` };
 };
 
 /**

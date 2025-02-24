@@ -73,8 +73,11 @@ const Dashboard = () => {
     {paymentStatus}
   </span>
 </p>
-
-
+{user?.paymentStatus === "Verified" && new Date() < new Date("2025-03-14T00:00:00Z") && (
+  <p className="text-sm text-green-400 mt-2">
+    ✅ You’ve already paid. You can pay again after March 14th.
+  </p>
+)}
           <div className="w-full flex flex-col items-center space-y-8">
             <h2 className="text-3xl font-bold text-yellow-400">🔥 Active Challenge</h2>
             <div className="w-full max-w-2xl bg-gray-800 bg-opacity-40 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-gray-700">
