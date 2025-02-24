@@ -19,7 +19,7 @@ const PaymentForm = ({ onClose }) => {
       try {
         console.log("🔍 Fetching user status with token...");
         const { data } = await axios.get(
-          "http://localhost:5000/api/auth/user-status",
+          "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status",
           {
             headers: {
               Authorization: `Bearer ${token}`, // ✅ Use Authorization header
@@ -53,7 +53,7 @@ const PaymentForm = ({ onClose }) => {
     try {
       console.log("📡 Initiating Payment:", { amount });
       const { data } = await axios.post(
-        "http://localhost:5000/api/payment/initiate",
+        "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/payment/initiate",
         { amount },
         {
           headers: {
