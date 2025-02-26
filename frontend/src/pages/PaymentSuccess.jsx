@@ -15,19 +15,23 @@ const PaymentSuccess = () => {
       return;
     }
 
-    const fetchPaymentStatus = async () => {
+    const fetchPaymentStatus = async (orderId) => {
+      const token = localStorage.getItem("authToken");
       try {
         const { data } = await axios.get(
           "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/payment/status",
-          { params: { orderId } }
+          {
+            params: { orderId },
+            headers: { Authorization: `Bearer ${token}` }, // ✅ Include token
+          }
         );
-
-        setPaymentStatus(data.paymentStatus || "Unknown");
+        return data.paymentStatus;
       } catch (err) {
-        console.error("❌ Error fetching payment status:", err);
-        setPaymentStatus("Failed");
+        console.error("❌ Error fetching payment status:", err.response?.data?.message || err.message);
+        throw err;
       }
     };
+    
 
     fetchPaymentStatus();
   }, [orderId, navigate]);

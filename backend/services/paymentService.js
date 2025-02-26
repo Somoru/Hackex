@@ -28,12 +28,17 @@ export const getAccessToken = async () => {
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
 
+    console.log("✅ PhonePe Access Token Response:", data); // 🔎 Log full response
+    if (!data.access_token) throw new Error("Access token missing.");
+
+    console.log("✅ Access Token Retrieved:", data.access_token); // ✅ Log the token itself
     return data.access_token;
   } catch (err) {
     console.error("❌ Access token error:", err.response?.data || err.message);
-    throw new Error("Failed to get access token.");
+    throw new Error("Token generation failed.");
   }
 };
+
 
 /**
  * 💳 Initiate Weekly Payment
