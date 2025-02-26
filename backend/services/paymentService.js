@@ -39,7 +39,6 @@ export const getAccessToken = async () => {
   }
 };
 
-
 /**
  * 💳 Initiate Weekly Payment
  */
@@ -64,29 +63,62 @@ export const initiatePayment = async (userId, amount) => {
   const merchantOrderId = `TXN_${userId}_${Date.now()}`;
   const payload = {
     merchantOrderId,
-    amount: amount * 100,
+    amount: amount * 100, // Amount in paise
     paymentFlow: {
       type: "PG_CHECKOUT",
       merchantUrls: {
-        redirectUrl: `${process.env.FRONTEND_URL}/payment-success?orderId=${merchantOrderId}`,
+        redirectUrl: `${process.env.FRONTEND_URL}/payment-success?orderId=${merchantOrderId}`, // ✅ PhonePe uses this after payment
       },
     },
   };
 
-  // ✅ Save or update payment record
-  await Payment.findOneAndUpdate(
-    { userId, week: currentWeek },
-    { merchantOrderId, amount, status: "PENDING" },
-    { upsert: true, new: true }
-  );
+  try {
+    const accessToken = await getAccessToken(); // 🔑 Fetch PhonePe access token
 
-  return { success: true, redirectUrl: `${process.env.FRONTEND_URL}/payment-success?orderId=${merchantOrderId}` };
+    const { data } = await axios.post(
+      `${process.env.PHONEPE_BASE_URL}/pg/checkout/v2/pay`,
+      payload,
+      {
+        headers: {
+          Authorization: `O-Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("✅ PhonePe API Response:", data);
+
+    if (!data.redirectUrl) {
+      throw new Error(`PhonePe did not return a redirect URL. Response: ${JSON.stringify(data)}`);
+    }
+
+    // ✅ Save or update payment record
+    await Payment.findOneAndUpdate(
+      { userId, week: currentWeek },
+      { merchantOrderId, amount, status: "PENDING" },
+      { upsert: true, new: true }
+    );
+
+    // ✅ Return PhonePe’s redirect URL for payment processing
+    return {
+      success: true,
+      redirectUrl: data.redirectUrl,
+    };
+
+  } catch (err) {
+    console.error("🔥 Payment initiation error:", err.response?.data || err.message);
+    throw new Error("Payment initiation failed.");
+  }
 };
 
 /**
  * 📝 Update Payment Status (Webhook)
  */
-export const updatePaymentStatus = async (merchantOrderId, transactionId, status) => {
+export const updatePaymentStatus = async (
+  merchantOrderId,
+  transactionId,
+  status
+) => {
   const updateFields = { status };
 
   if (transactionId) {
@@ -102,7 +134,6 @@ export const updatePaymentStatus = async (merchantOrderId, transactionId, status
   if (!payment) throw new Error("Payment record not found.");
   return payment;
 };
-
 
 /**
  * 🧾 Get Current Week Payment Status
