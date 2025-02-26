@@ -82,15 +82,22 @@ export const initiatePayment = async (userId, amount) => {
  * 📝 Update Payment Status (Webhook)
  */
 export const updatePaymentStatus = async (merchantOrderId, transactionId, status) => {
+  const updateFields = { status };
+
+  if (transactionId) {
+    updateFields.transactionId = transactionId; // ✅ Only set if not null
+  }
+
   const payment = await Payment.findOneAndUpdate(
     { merchantOrderId },
-    { status, transactionId, paymentDate: status === "SUCCESS" ? new Date() : null },
+    updateFields,
     { new: true }
   );
 
   if (!payment) throw new Error("Payment record not found.");
   return payment;
 };
+
 
 /**
  * 🧾 Get Current Week Payment Status
