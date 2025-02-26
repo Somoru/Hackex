@@ -27,6 +27,8 @@ const PaymentForm = ({ onClose }) => {
           }
         );
 
+        console.log("✅ PhonePe Response:", data);
+
         if (!data?.username) throw new Error("User data not found.");
         setUser(data);
       } catch (error) {

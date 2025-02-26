@@ -4,7 +4,7 @@ import axios from "axios";
 const PaymentForm = ({ onClose }) => {
   const [userId, setUserId] = useState(null);
   const [amount, setAmount] = useState(39); // Default entry fee
-  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -46,40 +46,43 @@ const PaymentForm = ({ onClose }) => {
     fetchUser();
   }, []);
 
-  const handlePayment = async () => {
-    const token = localStorage.getItem("authToken"); // ✅ Retrieve token before payment
+  const [loading, setLoading] = useState(false);
 
-    if (!userId || !token) {
-      alert("Authentication error. Please log in again.");
-      return;
+const handlePayment = async () => {
+  if (loading) return; // Prevent multiple clicks
+  setLoading(true);
+
+  const token = localStorage.getItem("authToken");
+
+  if (!userId || !token) {
+    alert("Authentication error. Please log in again.");
+    setLoading(false);
+    return;
+  }
+
+  try {
+    console.log("📡 Initiating Payment:", { userId, amount });
+    const { data } = await axios.post(
+      process.env.NODE_ENV === "production"
+        ? "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/payment/initiate"
+        : "http://localhost:5000/api/payment/initiate",
+      { amount },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (data.success && data.redirectUrl) {
+      alert("✅ Redirecting to payment page...");
+      window.location.href = data.redirectUrl;
+    } else {
+      alert(`❌ Payment initiation failed: ${data.message || "Unknown error"}`);
     }
-
-    try {
-      console.log("📡 Initiating Payment:", { userId, amount });
-      const { data } = await axios.post(
-        process.env.NODE_ENV === "production"
-          ? "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/payment/initiate"
-          : "http://localhost:5000/api/payment/initiate",
-        { amount }, // ✅ Pass only amount; user is derived from token on backend
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // ✅ Send token in Authorization header
-          },
-        }
-      );
-
-      if (data.success && data.redirectUrl) {
-        alert("Redirecting to payment page...");
-        window.location.href = data.redirectUrl; // ✅ Redirect to payment gateway
-      } else {
-        console.error("❌ Payment initiation failed:", data.message);
-        alert(`Payment initiation failed: ${data.message || "Unknown error"}`);
-      }
-    } catch (error) {
-      console.error("❌ Payment API Request Failed:", error.response?.data?.message || error.message);
-      alert("Payment failed. Please try again.");
-    }
-  };
+  } catch (error) {
+    console.error("❌ Payment API Request Failed:", error.response?.data?.message || error.message);
+    alert("Payment failed. Please try again.");
+  } finally {
+    setLoading(false); // Reset loading state
+  }
+};
 
   return (
     <div className="payment-form bg-gray-900 p-6 rounded-lg shadow-md border border-gray-700 text-white max-w-md w-full mx-auto">
