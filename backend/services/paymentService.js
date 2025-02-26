@@ -94,10 +94,11 @@ export const initiatePayment = async (userId, amount) => {
 
     // ✅ Save or update payment record
     await Payment.findOneAndUpdate(
-      { userId, week: currentWeek },
-      { merchantOrderId, amount, status: "PENDING" },
+      { merchantOrderId }, // ✅ Ensure lookup consistency
+      { userId, amount, status: "PENDING", merchantOrderId },
       { upsert: true, new: true }
     );
+    
 
     // ✅ Return PhonePe’s redirect URL for payment processing
     return {
@@ -114,24 +115,30 @@ export const initiatePayment = async (userId, amount) => {
 /**
  * 📝 Update Payment Status (Webhook)
  */
-export const updatePaymentStatus = async (
-  merchantOrderId,
-  transactionId,
-  status
-) => {
-  const updateFields = { status };
+
+
+export const updatePaymentStatus = async (merchantOrderId, transactionId, transactionStatus) => {
+  console.log("🔄 Updating payment for merchantOrderId:", merchantOrderId);
+
+  const updateFields = {
+    status: transactionStatus,
+    paymentDate: transactionStatus === "SUCCESS" ? new Date() : undefined,
+  };
 
   if (transactionId) {
-    updateFields.transactionId = transactionId; // ✅ Only set if not null
+    updateFields.transactionId = transactionId;
   }
 
   const payment = await Payment.findOneAndUpdate(
-    { merchantOrderId },
+    { merchantOrderId }, // ✅ Ensure this field matches what's in DB
     updateFields,
     { new: true }
   );
 
-  if (!payment) throw new Error("Payment record not found.");
+  if (!payment) {
+    console.error("❌ No payment found for merchantOrderId:", merchantOrderId);
+  }
+
   return payment;
 };
 

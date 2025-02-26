@@ -1,18 +1,21 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const PaymentForm = ({ onClose }) => {
   const [userId, setUserId] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(null);
   const [amount, setAmount] = useState(39); // Default entry fee
-
+  const [loading, setLoading] = useState(false); // ✅ Loading for payment initiation
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("authToken"); // ✅ Retrieve token inside useEffect
+      const token = localStorage.getItem("authToken");
 
       if (!token) {
-        alert("Authentication error. Please log in again.");
-        window.location.href = "/login";
+        Swal.fire("⚠️ Authentication error", "Please log in again.", "warning").then(() => {
+          window.location.href = "/login";
+        });
         return;
       }
 
@@ -22,67 +25,88 @@ const PaymentForm = ({ onClose }) => {
           process.env.NODE_ENV === "production"
             ? "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/auth/user-status"
             : "http://localhost:5000/api/auth/user-status",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`, // ✅ Use Authorization header
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
         console.log("✅ User status fetched:", data);
 
-        if (!data?.username) throw new Error("User data not found."); // Adjust based on backend response
-        setUserId(data.username); // ✅ Set userId based on available data
+        if (!data?.username) throw new Error("User data not found.");
+        setUserId(data.username); // ✅ Keep original logic for setting userId
+        setPaymentStatus(data.paymentStatus); // ✅ Capture payment status
       } catch (error) {
         console.error("❌ Error fetching user:", error.response?.data?.message || error.message);
-        alert("Authentication error. Please log in again.");
-        localStorage.removeItem("authToken");
-        window.location.href = "/login";
-      } finally {
-        setLoading(false);
+        Swal.fire("❌ Error", "Authentication error. Please log in again.", "error").then(() => {
+          localStorage.removeItem("authToken");
+          window.location.href = "/login";
+        });
       }
     };
 
     fetchUser();
   }, []);
 
-  const [loading, setLoading] = useState(false);
+  const handlePayment = async () => {
+    if (loading) return; // ✅ Prevent multiple clicks
+    setLoading(true);
 
-const handlePayment = async () => {
-  if (loading) return; // Prevent multiple clicks
-  setLoading(true);
+    const token = localStorage.getItem("authToken");
 
-  const token = localStorage.getItem("authToken");
-
-  if (!userId || !token) {
-    alert("Authentication error. Please log in again.");
-    setLoading(false);
-    return;
-  }
-
-  try {
-    console.log("📡 Initiating Payment:", { userId, amount });
-    const { data } = await axios.post(
-      process.env.NODE_ENV === "production"
-        ? "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/payment/initiate"
-        : "http://localhost:5000/api/payment/initiate",
-      { amount },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    if (data.success && data.redirectUrl) {
-      alert("✅ Redirecting to payment page...");
-      window.location.href = data.redirectUrl;
-    } else {
-      alert(`❌ Payment initiation failed: ${data.message || "Unknown error"}`);
+    if (!userId || !token) {
+      Swal.fire("⚠️ Authentication error", "Please log in again.", "warning");
+      setLoading(false);
+      return;
     }
-  } catch (error) {
-    console.error("❌ Payment API Request Failed:", error.response?.data?.message || error.message);
-    alert("Payment failed. Please try again.");
-  } finally {
-    setLoading(false); // Reset loading state
-  }
-};
+
+    if (paymentStatus === "SUCCESS") {
+      Swal.fire({
+        icon: "info",
+        title: "You have already paid ✅",
+        text: "You don't need to pay again. Payments will reopen on March 14th.",
+        confirmButtonColor: "#3085d6",
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      console.log("📡 Initiating Payment:", { userId, amount });
+      const { data } = await axios.post(
+        process.env.NODE_ENV === "production"
+          ? "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/payment/initiate"
+          : "http://localhost:5000/api/payment/initiate",
+        { amount },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success && data.redirectUrl) {
+        Swal.fire({
+          icon: "success",
+          title: "Redirecting to payment page...",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          window.location.href = data.redirectUrl;
+        });
+      } else {
+        Swal.fire("❌ Payment initiation failed", data.message || "Unknown error", "error");
+      }
+    } catch (error) {
+      const message = error.response?.data?.message;
+
+      if (message === "You have already paid. Payments will reopen on March 14th.") {
+        Swal.fire({
+          icon: "info",
+          title: "Payment Already Made ✅",
+          text: "You have already paid for this challenge. Payments reopen on March 14th.",
+          confirmButtonColor: "#3085d6",
+        });
+      } else {
+        Swal.fire("❌ Payment Failed", message || "Please try again.", "error");
+      }
+    } finally {
+      setLoading(false); // ✅ Reset loading state
+    }
+  };
 
   return (
     <div className="payment-form bg-gray-900 p-6 rounded-lg shadow-md border border-gray-700 text-white max-w-md w-full mx-auto">
@@ -108,10 +132,13 @@ const handlePayment = async () => {
               Cancel
             </button>
             <button
-              className="px-4 py-2 bg-yellow-400 text-black font-bold rounded shadow hover:bg-yellow-500 transition"
+              className={`px-4 py-2 bg-yellow-400 text-black font-bold rounded shadow ${
+                loading ? "opacity-50 cursor-not-allowed" : "hover:bg-yellow-500"
+              } transition`}
               onClick={handlePayment}
+              disabled={loading}
             >
-              Pay Now
+              {loading ? "Processing..." : "Pay Now"}
             </button>
           </div>
         </>
