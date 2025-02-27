@@ -42,6 +42,7 @@ export const getAccessToken = async () => {
 /**
  * 💳 Initiate Weekly Payment
  */
+
 export const initiatePayment = async (userId, amount) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     throw new Error("Invalid user ID.");
@@ -53,7 +54,7 @@ export const initiatePayment = async (userId, amount) => {
   const currentWeek = getCurrentWeek();
   const paymentRecord = await Payment.findOne({ userId, week: currentWeek });
 
-  const restrictionDate = new Date("2025-03-14T00:00:00Z"); // 🚫 Restrict until March 14th
+  const restrictionDate = new Date("2025-03-14T00:00:00Z"); 
   const now = new Date();
 
   if (paymentRecord?.status === "SUCCESS" && now < restrictionDate) {
@@ -61,19 +62,22 @@ export const initiatePayment = async (userId, amount) => {
   }
 
   const merchantOrderId = `TXN_${userId}_${Date.now()}`;
+
   const payload = {
     merchantOrderId,
-    amount: amount * 100, // Amount in paise
+    amount: amount * 100,
     paymentFlow: {
       type: "PG_CHECKOUT",
       merchantUrls: {
-        redirectUrl: `${process.env.FRONTEND_URL}/payment-success?orderId=${merchantOrderId}`, // ✅ PhonePe uses this after payment
+        redirectUrl: `${process.env.FRONTEND_URL}/payment-success?orderId=${merchantOrderId}`,
       },
     },
   };
 
   try {
-    const accessToken = await getAccessToken(); // 🔑 Fetch PhonePe access token
+    const accessToken = await getAccessToken();
+    
+    console.log("📡 Sending request to PhonePe:", JSON.stringify(payload, null, 2));
 
     const { data } = await axios.post(
       `${process.env.PHONEPE_BASE_URL}/pg/checkout/v2/pay`,
@@ -89,18 +93,26 @@ export const initiatePayment = async (userId, amount) => {
     console.log("✅ PhonePe API Response:", data);
 
     if (!data.redirectUrl) {
+      console.error("🔥 PhonePe Payment Failed:", data);
       throw new Error(`PhonePe did not return a redirect URL. Response: ${JSON.stringify(data)}`);
     }
 
-    // ✅ Save or update payment record
-    await Payment.findOneAndUpdate(
-      { merchantOrderId }, // ✅ Ensure lookup consistency
-      { userId, amount, status: "PENDING", merchantOrderId },
+    // ✅ Save or update payment record (Ensuring no duplicate `null` transactionId)
+    const updatedPayment = await Payment.findOneAndUpdate(
+      { userId, week: currentWeek }, // ✅ Ensure lookup consistency
+      {
+        userId,
+        week: currentWeek,
+        amount,
+        merchantOrderId,
+        transactionId: data.transactionId || null, // ✅ Ensure transactionId is stored properly
+        status: "PENDING",
+      },
       { upsert: true, new: true }
     );
-    
 
-    // ✅ Return PhonePe’s redirect URL for payment processing
+    console.log("✅ Payment record updated in DB:", updatedPayment);
+
     return {
       success: true,
       redirectUrl: data.redirectUrl,
@@ -111,6 +123,7 @@ export const initiatePayment = async (userId, amount) => {
     throw new Error("Payment initiation failed.");
   }
 };
+
 
 /**
  * 📝 Update Payment Status (Webhook)
