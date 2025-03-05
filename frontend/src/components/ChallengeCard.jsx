@@ -31,9 +31,9 @@ const ChallengeCard = ({ title, startDate, endDate, entryFee, paymentStatus }) =
                         transition={{ duration: 0.4 }}
                         className="mt-4 text-gray-300 text-lg bg-gray-900 p-4 rounded-lg shadow-md"
                     >
-                        <p>🏆 <strong>1st Place:</strong> ₹600</p>
-                        <p>🥈 <strong>2nd Place:</strong> ₹300</p>
-                        <p>🥉 <strong>3rd Place:</strong> ₹180</p>
+                        <p>🏆 <strong>1st Place:</strong> ₹390</p>
+                        <p>🥈 <strong>2nd Place:</strong> ₹195</p>
+                        <p>🥉 <strong>3rd Place:</strong> ₹117</p>
                         <p className="text-yellow-300 mt-2">💰 <strong>Entry Fee:</strong> {entryFee}</p>
                     </motion.div>
                 )}
