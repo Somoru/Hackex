@@ -105,7 +105,7 @@ const Home = () => {
 <p className="text-2xl font-semibold text-red-400 mt-4">
   ⏳ Offer Ends In:
   <span className="text-white font-bold text-3xl ml-2">
-    <Countdown date={new Date("2025-03-05T00:00:00Z")} />
+    <Countdown date={new Date("2025-03-08T00:00:00Z")} />
   </span>
 </p>
 
