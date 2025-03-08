@@ -35,10 +35,10 @@ export const getNextQuestion = async (req, res) => {
         return res.status(401).json({ error: "Unauthorized" });
     }
 
-    console.log("✅ User ID:", req.user.id);
+    console.log("✅ User ID:", req.user.userId);
 
     try {
-        const userId = req.user.id;
+        const userId = req.user.userId;
         console.log("🔍 Fetching last submission...");
         const lastSubmission = await Submission.findOne({ userId }).sort({ createdAt: -1 });
         console.log("📜 Last Submission:", lastSubmission);
