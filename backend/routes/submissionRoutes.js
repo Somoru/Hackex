@@ -3,7 +3,7 @@ import Submission from "../models/Submission.js";
 import { executeCode } from "../services/executionService.js";
 import { getQuestionById } from "../services/questionService.js";
 import { authenticateUser, ensurePaidUser } from "../middlewares/authMiddleware.js";
-
+import { updateLeaderboard } from "../controllers/leaderboardController.js";
 const router = express.Router();
 
 router.post("/submit", authenticateUser, ensurePaidUser, async (req, res) => {
