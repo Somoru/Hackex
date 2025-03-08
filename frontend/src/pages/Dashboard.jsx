@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ChallengeCard from "../components/ChallengeCard";
 import { getUserStatus } from "../services/authService";
 import axios from "axios";
+
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState("Not Submitted");
@@ -72,10 +73,10 @@ const Dashboard = () => {
               {paymentStatus}
             </span>
           </p>
-          {user?.paymentStatus === "Verified" &&
+          {paymentStatus === "Verified" &&
             new Date() < new Date("2025-03-14T00:00:00Z") && (
               <p className="text-sm text-green-400 mt-2">
-                ✅ You’ve already paid. You can pay again after March 14th.
+                ✅ You’ve already paid. You can start coding now!
               </p>
             )}
           <div className="w-full flex flex-col items-center space-y-8">
@@ -88,7 +89,7 @@ const Dashboard = () => {
                 startDate="Mar 5"
                 endDate="Mar 12"
                 entryFee="₹39"
-                paymentStatus={paymentStatus}
+                paymentStatus={paymentStatus} // ✅ Pass payment status dynamically
               />
             </div>
           </div>

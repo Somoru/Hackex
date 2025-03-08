@@ -1,5 +1,6 @@
 import { executeCode } from "../services/executionService.js";
 import { getQuestionById } from "../services/questionService.js";
+import { updateLeaderboard } from "./leaderboardController.js";
 
 export const submitCode = async (req, res) => {
     try {
@@ -15,6 +16,8 @@ export const submitCode = async (req, res) => {
         }
 
         const executionResult = await executeCode(language, code, question.test_cases);
+
+        await updateLeaderboard(userId);
 
         res.json({
             questionId: question.id,

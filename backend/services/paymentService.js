@@ -52,17 +52,18 @@ export const initiatePayment = async (userId, amount) => {
   if (!user) throw new Error("User not found.");
 
   const currentWeek = getCurrentWeek();
-  const paymentRecord = await Payment.findOne({ userId, week: currentWeek });
+  const existingPayment = await Payment.findOne({ userId, week: currentWeek });
 
-  const restrictionDate = new Date("2025-03-14T00:00:00Z"); 
-  const now = new Date();
-
-  if (paymentRecord?.status === "SUCCESS" && now < restrictionDate) {
-    throw new Error("You have already paid. Payments will reopen on March 14th.");
+  if (existingPayment) {
+    if (existingPayment.status === "SUCCESS") {
+      throw new Error("You have already paid for this week.");
+    } else if (existingPayment.status === "PENDING") {
+      throw new Error("Your payment is still being processed.");
+    }
   }
 
+  // ✅ Proceed with new payment
   const merchantOrderId = `TXN_${userId}_${Date.now()}`;
-
   const payload = {
     merchantOrderId,
     amount: amount * 100,
@@ -74,55 +75,30 @@ export const initiatePayment = async (userId, amount) => {
     },
   };
 
-  try {
-    const accessToken = await getAccessToken();
-    
-    console.log("📡 Sending request to PhonePe:", JSON.stringify(payload, null, 2));
+  const accessToken = await getAccessToken();
+  const { data } = await axios.post(
+    `${process.env.PHONEPE_BASE_URL}/pg/checkout/v2/pay`,
+    payload,
+    { headers: { Authorization: `O-Bearer ${accessToken}`, "Content-Type": "application/json" } }
+  );
 
-    const { data } = await axios.post(
-      `${process.env.PHONEPE_BASE_URL}/pg/checkout/v2/pay`,
-      payload,
-      {
-        headers: {
-          Authorization: `O-Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    console.log("✅ PhonePe API Response:", data);
-
-    if (!data.redirectUrl) {
-      console.error("🔥 PhonePe Payment Failed:", data);
-      throw new Error(`PhonePe did not return a redirect URL. Response: ${JSON.stringify(data)}`);
-    }
-
-    // ✅ Save or update payment record (Ensuring no duplicate `null` transactionId)
-    const updatedPayment = await Payment.findOneAndUpdate(
-      { userId, week: currentWeek }, // ✅ Ensure lookup consistency
-      {
-        userId,
-        week: currentWeek,
-        amount,
-        merchantOrderId,
-        transactionId: data.transactionId || null, // ✅ Ensure transactionId is stored properly
-        status: "PENDING",
-      },
-      { upsert: true, new: true }
-    );
-
-    console.log("✅ Payment record updated in DB:", updatedPayment);
-
-    return {
-      success: true,
-      redirectUrl: data.redirectUrl,
-    };
-
-  } catch (err) {
-    console.error("🔥 Payment initiation error:", err.response?.data || err.message);
-    throw new Error("Payment initiation failed.");
+  if (!data.redirectUrl) {
+    throw new Error("Payment failed. No redirect URL received.");
   }
+
+  // ✅ Save the payment record
+  await Payment.create({
+    userId,
+    week: currentWeek,
+    amount,
+    merchantOrderId,
+    transactionId: data.transactionId || null,
+    status: "PENDING",
+  });
+
+  return { success: true, redirectUrl: data.redirectUrl };
 };
+
 
 
 /**

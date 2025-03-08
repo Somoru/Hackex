@@ -1,10 +1,20 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import PaymentForm from "./PaymentForm"; // Import Payment Form Component
 
 const ChallengeCard = ({ title, startDate, endDate, entryFee, paymentStatus }) => {
     const [showDetails, setShowDetails] = useState(false);
     const [showPaymentForm, setShowPaymentForm] = useState(false);
+    const navigate = useNavigate();
+
+    const handleButtonClick = () => {
+        if (paymentStatus === "Verified") {
+            navigate("/code-execution"); // 🚀 Redirect to coding page if payment is done
+        } else {
+            setShowPaymentForm(true); // 💰 Show payment form if not paid
+        }
+    };
 
     return (
         <motion.div
@@ -40,22 +50,19 @@ const ChallengeCard = ({ title, startDate, endDate, entryFee, paymentStatus }) =
             </AnimatePresence>
 
             <div className="flex gap-4 mt-4">
-                {paymentStatus === "SUCCESS" ? (
-                    <button className="px-4 py-2 bg-green-400 text-black font-bold rounded-lg shadow-md hover:bg-green-500 transition duration-300">
-                        Start Challenge 🚀
-                    </button>
-                ) : (
-                    showPaymentForm ? (
-                        <PaymentForm onClose={() => setShowPaymentForm(false)} />
-                    ) : (
-                        <button
-                            className="px-4 py-2 bg-yellow-400 text-black font-bold rounded-lg shadow-md hover:bg-yellow-500 transition duration-300"
-                            onClick={() => setShowPaymentForm(true)}
-                        >
-                            Join Now
-                        </button>
-                    )
-                )}
+                <button
+                    onClick={handleButtonClick}
+                    className={`px-6 py-2 font-bold rounded-lg shadow-md transition duration-300 ${
+                        paymentStatus === "Verified"
+                            ? "bg-green-500 text-white hover:bg-green-400"
+                            : "bg-yellow-500 text-black hover:bg-yellow-400"
+                    }`}
+                >
+                    {paymentStatus === "Verified" ? "🚀 Let's Go" : "💰 Join Now"}
+                </button>
+
+                {showPaymentForm && <PaymentForm onClose={() => setShowPaymentForm(false)} />}
+
                 <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

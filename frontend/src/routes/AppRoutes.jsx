@@ -12,7 +12,7 @@ import RefundPolicy from "../pages/RefundPolicy";
 import AdminPanel from "../pages/AdminPanel";
 import AdminLogin from "../pages/AdminLogin";
 import PaymentSuccess from "../pages/PaymentSuccess";
-
+import CodeExecution from "../pages/CodeExecution";
 const AppRoutes = () => {
   const isAdminAuthenticated = !!localStorage.getItem("adminToken");
   return (
@@ -31,7 +31,7 @@ const AppRoutes = () => {
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
         <Route path="/refund-policy" element={<RefundPolicy />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
-
+        <Route path="/code-execution" element={<CodeExecution />} />
         {/* ✅ Catch-All Route (Redirects unknown paths to Home) */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

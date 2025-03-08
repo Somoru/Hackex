@@ -2,7 +2,6 @@ import axios from "axios";
 import dotenv from "dotenv";
 
 dotenv.config();
-
 const ACI_EXECUTOR_URL = process.env.ACI_EXECUTOR_URL;
 
 export const executeCode = async (language, code, testCases) => {
@@ -17,7 +16,9 @@ export const executeCode = async (language, code, testCases) => {
         const response = await axios.post(ACI_EXECUTOR_URL, {
             language,
             code,
-            test_cases: publicTestCases
+            test_cases: publicTestCases,
+            timeout: 5, // ⏳ Limit execution time
+            memory_limit: 128 // 🔥 Restrict memory usage
         });
 
         return response.data;
