@@ -45,7 +45,7 @@ const CodeExecution = () => {
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
-        "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/code/execute",
+        "http://localhost:8080/api/code/execute",
         { language, code, questionId: question.id },
         { headers: { Authorization: `Bearer ${token}` } }
       );

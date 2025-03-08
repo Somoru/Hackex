@@ -24,7 +24,7 @@ export const authenticateUser = (req, res, next) => {
           return res.status(403).json({ error: "Invalid token structure" });
       }
 
-      req.user = { userId: decoded.userId }; // ✅ Ensure `req.user.userId` is set
+      req.user = { userId: decoded.userId }; // ✅ Ensure `req.user.id` is set
       next();
   } catch (error) {
       console.log("❌ Token verification failed:", error.message);

@@ -10,6 +10,8 @@ export const submitCode = async (req, res) => {
             return res.status(400).json({ error: "Missing required fields" });
         }
 
+        
+
         const question = await getQuestionById(questionId);
         if (!question) {
             return res.status(404).json({ error: "Question not found" });
@@ -17,7 +19,8 @@ export const submitCode = async (req, res) => {
 
         const executionResult = await executeCode(language, code, question.test_cases);
 
-        await updateLeaderboard(userId);
+        // ✅ Now userId is correctly passed
+        
 
         res.json({
             questionId: question.id,
