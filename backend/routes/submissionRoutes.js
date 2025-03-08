@@ -72,7 +72,7 @@ router.post("/submit", authenticateUser, ensurePaidUser, async (req, res) => {
         await submission.save();
         console.log("✅ Submission Saved Successfully!");
 
-        await updateLeaderboard(userId);
+        await updateLeaderboard(req.user.userId);
 
         res.json({
             message: "Submission recorded",
