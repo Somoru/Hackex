@@ -1,79 +1,45 @@
-import React, { useState } from "react";
+// ChallengeCard.jsx
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import PaymentForm from "./PaymentForm"; // Import Payment Form Component
+import { motion } from "framer-motion";
 
-const ChallengeCard = ({ title, startDate, endDate, entryFee, paymentStatus }) => {
-    const [showDetails, setShowDetails] = useState(false);
-    const [showPaymentForm, setShowPaymentForm] = useState(false);
-    const navigate = useNavigate();
+const ChallengeCard = () => {
+  const navigate = useNavigate();
 
-    const handleButtonClick = () => {
-        if (paymentStatus === "Verified") {
-            navigate("/code-execution"); // 🚀 Redirect to coding page if payment is done
-        } else {
-            setShowPaymentForm(true); // 💰 Show payment form if not paid
-        }
-    };
+  const handleButtonClick = () => {
+    navigate("/code-execution");
+  };
 
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mt-6 bg-gray-800 bg-opacity-60 backdrop-blur-lg p-6 rounded-xl shadow-md border border-gray-700 hover:border-cyan-400 transition-all duration-300"
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+      className="w-full relative p-8 rounded-2xl bg-gray-800/70 backdrop-blur-md shadow-2xl border border-cyan-600 hover:shadow-yellow-400/40 transition-all hover:scale-105 duration-500"
+    >
+      {/* Title */}
+      <h2 className="text-4xl font-bold text-yellow-400 mb-4 text-center">
+        🚀 Demo Challenge
+      </h2>
+
+      {/* Description */}
+      <p className="text-gray-300 text-lg text-center mb-8 leading-relaxed">
+        Step into the <span className="text-cyan-400 font-semibold">HackEx Arena</span> and experience coding like never before. Compete, conquer, and elevate your skills to greatness.
+      </p>
+
+      {/* Call to Action */}
+      <div className="flex justify-center">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleButtonClick}
+          className="px-8 py-4 rounded-lg bg-yellow-400 text-black font-bold text-lg shadow-lg hover:shadow-yellow-400/50 transition-all duration-300"
         >
-            <h3 className="text-2xl text-yellow-300 font-bold">{title}</h3>
-            <p className="text-gray-400 mt-2">"Join now by paying the Entry Fee & compete for top prizes!"</p>
-
-            {/* Date Box */}
-            <div className="absolute top-4 right-4 bg-gray-700 bg-opacity-80 text-gray-300 px-3 py-1 rounded-md text-sm">
-                📅 {startDate} - {endDate}
-            </div>
-
-            {/* Prize Breakdown */}
-            <AnimatePresence>
-                {showDetails && (
-                    <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.4 }}
-                        className="mt-4 text-gray-300 text-lg bg-gray-900 p-4 rounded-lg shadow-md"
-                    >
-                        <p>🏆 <strong>1st Place:</strong> ₹390</p>
-                        <p>🥈 <strong>2nd Place:</strong> ₹195</p>
-                        <p>🥉 <strong>3rd Place:</strong> ₹117</p>
-                        <p className="text-yellow-300 mt-2">💰 <strong>Entry Fee:</strong> {entryFee}</p>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            <div className="flex gap-4 mt-4">
-                <button
-                    onClick={handleButtonClick}
-                    className={`px-6 py-2 font-bold rounded-lg shadow-md transition duration-300 ${
-                        paymentStatus === "Verified"
-                            ? "bg-green-500 text-white hover:bg-green-400"
-                            : "bg-yellow-500 text-black hover:bg-yellow-400"
-                    }`}
-                >
-                    {paymentStatus === "Verified" ? "🚀 Let's Go" : "💰 Join Now"}
-                </button>
-
-                {showPaymentForm && <PaymentForm onClose={() => setShowPaymentForm(false)} />}
-
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-4 py-2 bg-gray-700 text-white font-bold rounded-lg shadow-md hover:bg-gray-600 transition duration-300"
-                    onClick={() => setShowDetails(!showDetails)}
-                >
-                    {showDetails ? "Hide Details" : "View Details"}
-                </motion.button>
-            </div>
-        </motion.div>
-    );
+          🚀 Start Your Challenge
+        </motion.button>
+      </div>
+    </motion.div>
+  );
 };
 
 export default ChallengeCard;

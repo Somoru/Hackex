@@ -9,6 +9,14 @@ import { FaInstagram } from "react-icons/fa";
 import Countdown from "react-countdown";
 import "../styles/HeroSection.css";
 import ContactForm from "../components/ContactForm";
+import { FiUser, FiTarget } from "react-icons/fi";
+import { HiLightBulb, HiMegaphone } from "react-icons/hi2";
+import { GiCrownedHeart } from "react-icons/gi";
+import { BsRocketTakeoff } from "react-icons/bs";
+import mallareddy from "../assets/mallareddy.jpeg"
+import iith1 from "../assets/iith1.jpeg"
+import iith2 from "../assets/iith2.jpeg"
+import mu from "../assets/mu.jpeg"
 const Home = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -82,80 +90,11 @@ const Home = () => {
         </motion.div>
       </section>
 
-      {/* 🚀 EARLY BIRD OFFER - MATCHED TO THE THEME 🚀 */}
-      <section className="relative py-20 px-6 text-center bg-gradient-to-b from-gray-900 to-black">
-        <motion.div
-          className="relative text-white max-w-5xl mx-auto p-12 rounded-3xl shadow-lg border-2 border-cyan-400"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-        >
-          {/* 🔥 HEADLINE - STYLIZED BUT NOT OVERDONE */}
-          <motion.h2
-  className="text-5xl font-extrabold uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500"
-  animate={{ scale: [1, 1.05, 1] }}
-  transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
->
-  <span className="text-white">🎉</span> EARLY BIRD OFFER! <span className="text-white">🎉</span>
-</motion.h2>
-
-          {/* ⚡ Countdown Timer with Animation */}
-          {/* ⚡ Countdown Timer with Animation - Ends on 5th March */}
-<p className="text-2xl font-semibold text-red-400 mt-4">
-  ⏳ Offer Ends In:
-  <span className="text-white font-bold text-3xl ml-2">
-    <Countdown date={new Date("2025-03-08T00:00:00Z")} />
-  </span>
-</p>
-
-
-          {/* PRICING - Animated Old vs New Price */}
-          <motion.div
-            className="flex justify-center items-center gap-6 text-7xl font-extrabold tracking-wide mt-6"
-            initial={{ scale: 1 }}
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ repeat: Infinity, duration: 1.2 }}
-          >
-            <span className="text-gray-500 line-through text-4xl drop-shadow-md">₹60</span>
-            <span className="text-cyan-400 text-8xl drop-shadow-md">₹39</span>
-          </motion.div>
-
-          {/* 🚀 BENEFITS LIST */}
-          <div className="mt-6 text-xl md:text-2xl text-gray-300 font-semibold leading-relaxed">
-            <p className="mb-2">🔥 Lowest Entry Price Ever!</p>
-            <p className="mb-2">🏆 Unlock Exclusive Coding Challenges</p>
-            <p>⚡ Join the Biggest Competitive Coding Revolution</p>
-          </div>
-
-          {/* CTA BUTTON - HIGH CONTRAST & HOVER EFFECT */}
-          <motion.div
-            className="mt-8"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <Button
-              label="🔥 CLAIM YOUR SPOT NOW!"
-              className="bg-cyan-500 hover:bg-cyan-600 text-black text-lg py-4 px-8 rounded-xl font-bold uppercase transition shadow-xl"
-              onClick={() => navigate(isAuthenticated ? "/dashboard" : "/login")}
-            />
-          </motion.div>
-
-          {/* LIMITED TIME WARNING */}
-          <motion.p
-            className="mt-6 text-lg text-red-400 font-bold"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-          >
-            🚀 Limited Time Offer – Don't Miss Out! 🚀
-          </motion.p>
-        </motion.div>
-      </section>
+      
 
 
 {/* 🚀 REFINED REWARDS SYSTEM WITH BETTER TEXT COLORS 🚀 */}
-<section className="py-24 bg-gray-900 text-white text-center px-6">
+<section className="py-24 bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white text-center px-6">
   <motion.h2 
     className="text-5xl font-extrabold mb-16 text-cyan-400 tracking-wide uppercase"
     initial={{ opacity: 0, y: -20 }} 
@@ -237,8 +176,9 @@ const Home = () => {
   </div>
 </section>
 
-      {/* 🚀 MEET OUR TEAM - ALL CARDS IN ONE ROW 🚀 */}
-<section className="py-24 bg-gradient-to-b from-black to-gray-900 text-white text-center px-6">
+
+
+<section className="py-24 bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white text-center px-6">
   <motion.h2
     className="text-5xl font-extrabold mb-16 text-cyan-400 uppercase tracking-wide"
     initial={{ opacity: 0, y: -20 }}
@@ -249,42 +189,106 @@ const Home = () => {
     Meet Our Team
   </motion.h2>
 
-  {/* Team Grid */}
-  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 max-w-4xl mx-auto">
     {[
-      { name: "N Pranav", role: "Logistics Head", icon: "📦", color: "bg-yellow-500", quote:"From Challenges to Rewards, We Make Every Step Count" },
-      { name: "Alekhya Nelabhotla", role: "Marketing Head", icon: "📣", color: "bg-pink-500", quote:"Bringing HackEx to the Spotlight, One Campaign at a Time"},
-      { name: "Rangisetti Lakshmi Pavan", role: "Technical Head", icon: "💻", color: "bg-blue-500", quote:"Crafting the Code Behind Every Challenge and Reward"},
-      { name: "Peddi Praharshitha", role: "Content Head", icon: "✍️", color: "bg-green-500", quote:"Turning Ideas into Engaging Content for Every Coder"},
-      { name: "Vedulla Bharath", role: "Finance Head", icon: "💰", color: "bg-purple-500" , quote: "Balancing Growth and Stability to Ensure HackEx’s Success"},
+      {
+        name: "Rangisetti Lakshmi Pavan",
+        role: "Founder",
+        icon: <GiCrownedHeart size={28} />,
+        iconBg: "from-yellow-300 to-yellow-500",
+        quote: "Crafting the Vision Behind HackEx and Driving It Forward"
+      },
+      {
+        name: "Alekhya Nelabhotla",
+        role: "Co-Founder",
+        icon: <BsRocketTakeoff size={24} />,
+        iconBg: "from-pink-400 to-pink-600",
+        quote: "Strategizing Growth and Spotlighting HackEx to the World"
+      }
     ].map((member, index) => (
       <motion.div
         key={index}
-        className="relative bg-gray-800 rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+        className="relative bg-gray-800 rounded-2xl overflow-hidden shadow-xl hover:shadow-cyan-400/20 transform transition-all duration-300 hover:scale-105"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: index * 0.1 }}
+        transition={{ duration: 0.6, delay: index * 0.2 }}
       >
-        {/* Icon Placeholder */}
+        {/* Icon */}
         <div
-          className={`w-12 h-12 mx-auto mt-4 flex items-center justify-center rounded-full text-xl text-white shadow-lg ${member.color}`}
+          className={`w-14 h-14 mx-auto mt-6 flex items-center justify-center rounded-full text-white shadow-lg bg-gradient-to-br ${member.iconBg}`}
         >
           {member.icon}
         </div>
 
-        {/* Member Details */}
-        <div className="p-4 text-center">
+        {/* Member Info */}
+        <div className="p-6 text-center">
           <h3 className="text-xl font-bold text-cyan-300">{member.name}</h3>
-          <p className="text-gray-400 mt-1 text-sm">{member.role}</p>
+          <span className="inline-block mt-1 px-3 py-1 bg-gray-700 text-sm rounded-full text-yellow-300 font-semibold tracking-wide">
+            {member.role}
+          </span>
         </div>
 
-        {/* Hover Overlay with Additional Details */}
-        <div className="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center opacity-0 hover:opacity-100 transition-all duration-300">
-          <h3 className="text-xl font-bold text-white">{member.name}</h3>
-          <p className="text-gray-300 mb-2">{member.role}</p>
-          <p className="text-gray-400 italic text-xs">
+        {/* Hover Overlay with Quote */}
+        <div className="absolute inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center opacity-0 hover:opacity-100 transition-all duration-300 p-6">
+          <h3 className="text-lg font-bold text-white">{member.name}</h3>
+          <p className="text-gray-400 italic text-sm mt-2 text-center max-w-xs">
             {member.quote}
+          </p>
+        </div>
+      </motion.div>
+    ))}
+  </div>
+</section>
+
+<section className="py-24 bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white text-center px-6">
+<motion.h2
+    className="text-5xl font-extrabold mb-16 text-cyan-400 tracking-wide"
+    initial={{ opacity: 0, y: -20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 1 }}
+  >
+    Our Achievements
+  </motion.h2>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+    {[
+      {
+        image: mallareddy,
+        description: "HackEx won Best Tech Innovation 2024 at NIT Warangal.",
+      },
+      {
+        image: iith1,
+        description: "Over 500+ coders competed in our flagship event HACKFEST.",
+      },
+      {
+        image: iith2,
+        description: "Featured in Startup India's ‘Top 50 Emerging Startups’.",
+      },
+      {
+        image: mu,
+        description: "Featured in Startup India's ‘Top 50 Emerging Startups’.",
+      },
+    ].map((item, index) => (
+      <motion.div
+        key={index}
+        className="relative rounded-xl overflow-hidden shadow-lg group"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: index * 0.2 }}
+      >
+        <img
+          src={item.image}
+          alt={`Achievement ${index + 1}`}
+          className="object-cover w-full h-64 rounded-xl transform group-hover:scale-105 transition duration-300"
+        />
+
+        {/* Hover Overlay */}
+        <div className="absolute inset-0 bg-black bg-opacity-70 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center p-4">
+          <p className="text-gray-200 text-sm md:text-base italic text-center">
+            {item.description}
           </p>
         </div>
       </motion.div>

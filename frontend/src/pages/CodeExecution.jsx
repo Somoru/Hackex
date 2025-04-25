@@ -19,17 +19,18 @@ const CodeExecution = () => {
   ];
 
   useEffect(() => {
-    if (!question) {
-      fetchQuestion();
-    }
+    if (!question) fetchQuestion();
   }, []);
 
   const fetchQuestion = async () => {
     try {
       const token = localStorage.getItem("authToken");
-      const response = await axios.get("https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/questions/next", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/questions/next",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setQuestion(response.data);
       localStorage.setItem("currentQuestion", JSON.stringify(response.data));
     } catch (err) {
@@ -60,78 +61,71 @@ const CodeExecution = () => {
 
   const handleSubmit = async () => {
     if (!results) {
-        alert("❌ Run your code before submitting!");
-        return;
+      alert("❌ Run your code before submitting!");
+      return;
     }
 
     const token = localStorage.getItem("authToken");
 
     const submissionPayload = {
-        language: language,
-        code: code,
-        questionId: question.id,
-        challengeName: "Weekly Challenge",
-        timeTakenSec: question.time_limit_ms / 1000 // ✅ Convert time from question
+      language,
+      code,
+      questionId: question.id,
+      challengeName: "Weekly Challenge",
+      timeTakenSec: question.time_limit_ms / 1000,
     };
 
-    console.log("🚀 Sending Submission Payload:", submissionPayload);
-
     try {
-        const response = await axios.post(
-            "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/submissions/submit",
-            submissionPayload,
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        alert("✅ Submission Recorded!");
-
-        // ✅ Fetch new question after submission
-        localStorage.removeItem("currentQuestion"); // Remove old question
-        setQuestion(null);
-        fetchQuestion();
+      await axios.post(
+        "https://hackex-backend-gcdchvgghna9bef3.southindia-01.azurewebsites.net/api/submissions/submit",
+        submissionPayload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert("✅ Submission Recorded!");
+      localStorage.removeItem("currentQuestion");
+      setQuestion(null);
+      fetchQuestion();
     } catch (err) {
-        console.error("❌ Error submitting code:", err.response?.data || err);
+      console.error("❌ Error submitting code:", err.response?.data || err);
     }
-};
+  };
 
-
-  if (!question) return <div className="text-white">Loading...</div>;
+  if (!question) return <div className="text-white p-6">Loading question...</div>;
 
   return (
-    <div 
+    <div
       className="min-h-screen flex flex-col md:flex-row gap-6 p-6 pt-24 bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white"
-      onContextMenu={(e) => e.preventDefault()} 
-      onCopy={(e) => e.preventDefault()} 
-      onCut={(e) => e.preventDefault()} 
+      onContextMenu={(e) => e.preventDefault()}
+      onCopy={(e) => e.preventDefault()}
+      onCut={(e) => e.preventDefault()}
       onPaste={(e) => e.preventDefault()}
     >
-      {/* Left Pane: Question Details */}
-      <div className="w-full md:w-1/2 bg-gray-900 p-6 rounded-lg shadow-md select-text">
-        <h1 className="text-3xl font-bold text-cyan-400">💡 {question.title}</h1>
-        <p className="text-lg text-gray-300 mt-3">{question.description}</p>
+      {/* 📘 LEFT PANE: Question Section */}
+      <div className="w-full md:w-1/2 bg-gray-900/80 backdrop-blur-md p-6 rounded-xl shadow-lg border border-cyan-500/30">
+        <h1 className="text-3xl font-bold text-yellow-400">💡 {question.title}</h1>
+        <p className="text-lg text-gray-300 mt-3 leading-relaxed">{question.description}</p>
 
-        {/* Sample Test Cases */}
+        {/* 🧪 Test Cases */}
         <div className="mt-6">
-          <h2 className="text-xl text-yellow-400">🧪 Sample Test Cases</h2>
-          <ul className="mt-3 space-y-3">
+          <h2 className="text-xl font-semibold text-cyan-400">🧪 Sample Test Cases</h2>
+          <ul className="mt-4 space-y-3 text-sm">
             {question.test_cases.slice(0, 2).map((testCase, index) => (
-              <li key={index} className="bg-gray-800 p-4 rounded-md">
-                <strong>Input:</strong> {testCase.input}<br />
-                <strong>Output:</strong> {testCase.expected_output}
+              <li key={index} className="bg-gray-800 border border-gray-700 p-4 rounded-lg text-gray-200">
+                <div><span className="font-bold ">Input:</span> {testCase.input}</div>
+                <div><span className="font-bold ">Expected Output:</span> {testCase.expected_output}</div>
               </li>
             ))}
           </ul>
         </div>
       </div>
 
-      {/* Right Pane: Code Editor & Execution Results */}
+      {/* 💻 RIGHT PANE: Editor + Actions */}
       <div className="w-full md:w-1/2 space-y-6">
-        
-        {/* Language Selector */}
-        <div className="bg-gray-900 p-4 rounded-lg shadow-md">
-          <h2 className="text-xl text-cyan-400">🌐 Select Language</h2>
+        {/* 🌐 Language Selector */}
+        <div className="bg-gray-900 p-4 rounded-xl shadow-md border border-gray-700">
+          <h2 className="text-xl font-semibold text-cyan-400">🌐 Select Language</h2>
           <select
-            className="mt-2 p-2 rounded-md bg-gray-800 text-white w-full"
+            className="mt-3 p-2 rounded-md bg-gray-800 text-white w-full border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-500"
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
           >
@@ -143,17 +137,15 @@ const CodeExecution = () => {
           </select>
         </div>
 
-        {/* Code Editor */}
-        <div className="bg-gray-900 p-4 rounded-lg shadow-md">
-          <h2 className="text-xl text-cyan-400">📝 Code Editor</h2>
+        {/* 📝 Code Editor */}
+        <div className="bg-gray-900 p-4 rounded-xl shadow-md border border-gray-700">
+          <h2 className="text-xl font-semibold text-cyan-400 mb-2">📝 Code Editor</h2>
           <Editor
             height="300px"
             theme="vs-dark"
             language={language}
             value={code}
-            options={{
-              readOnly: false,
-            }}
+            options={{ readOnly: false }}
             onChange={(newCode) => setCode(newCode)}
             onMount={(editor) => {
               editor.onDidPaste((e) => e.preventDefault());
@@ -161,12 +153,14 @@ const CodeExecution = () => {
           />
         </div>
 
-        {/* Buttons */}
-        <div className="flex space-x-4">
+        {/* ⚙️ Action Buttons */}
+        <div className="flex gap-4">
           <button
             onClick={handleExecute}
-            className={`px-6 py-2 font-semibold rounded-md shadow-md ${
-              executing ? "bg-gray-600 text-gray-400 cursor-not-allowed" : "bg-yellow-500 text-black hover:bg-yellow-400"
+            className={`px-6 py-2 font-bold rounded-lg transition duration-300 ${
+              executing
+                ? "bg-gray-600 text-gray-300 cursor-not-allowed"
+                : "bg-yellow-400 text-black hover:bg-yellow-300 shadow-md"
             }`}
             disabled={executing}
           >
@@ -174,8 +168,10 @@ const CodeExecution = () => {
           </button>
           <button
             onClick={handleSubmit}
-            className={`px-6 py-2 font-semibold rounded-md shadow-md ${
-              executing ? "bg-gray-600 text-gray-400 cursor-not-allowed" : "bg-green-500 text-white hover:bg-green-400"
+            className={`px-6 py-2 font-bold rounded-lg transition duration-300 ${
+              executing
+                ? "bg-gray-600 text-gray-300 cursor-not-allowed"
+                : "bg-green-500 text-white hover:bg-green-400 shadow-md"
             }`}
             disabled={executing}
           >
@@ -183,26 +179,28 @@ const CodeExecution = () => {
           </button>
         </div>
 
-        {/* Test Case Results Table */}
+        {/* ✅ Test Case Results */}
         {results && (
-          <div className="bg-gray-900 p-4 rounded-lg shadow-md">
-            <h2 className="text-xl text-yellow-400">✅ Test Case Results</h2>
-            <table className="w-full mt-3 border-collapse border border-gray-700">
+          <div className="bg-gray-900 p-4 rounded-xl shadow-md border border-gray-700">
+            <h2 className="text-xl font-semibold text-yellow-400 mb-3">✅ Test Case Results</h2>
+            <table className="w-full border-collapse text-sm">
               <thead>
-                <tr className="bg-gray-700 text-white">
-                  <th className="p-2 border border-gray-600">Input</th>
-                  <th className="p-2 border border-gray-600">Your Output</th>
-                  <th className="p-2 border border-gray-600">Status</th>
+                <tr className="bg-gray-800 text-gray-200">
+                  <th className="p-2 border border-gray-700">Input</th>
+                  <th className="p-2 border border-gray-700">Your Output</th>
+                  <th className="p-2 border border-gray-700">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {results.test_cases.map((testCase, index) => (
-                  <tr key={index} className="border border-gray-700">
-                    <td className="p-2">{testCase.input}</td>
-                    <td className="p-2">{testCase.output}</td>
-                    <td className={`p-2 font-bold ${
-                      testCase.status === "Pass" ? "text-green-400" : "text-red-400"
-                    }`}>
+                  <tr key={index}>
+                    <td className="p-2 border border-gray-700">{testCase.input}</td>
+                    <td className="p-2 border border-gray-700">{testCase.output}</td>
+                    <td
+                      className={`p-2 font-semibold border border-gray-700 ${
+                        testCase.status === "Pass" ? "text-green-400" : "text-red-400"
+                      }`}
+                    >
                       {testCase.status}
                     </td>
                   </tr>
