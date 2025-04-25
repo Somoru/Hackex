@@ -256,19 +256,19 @@ const Home = () => {
     {[
       {
         image: mallareddy,
-        description: "HackEx won Best Tech Innovation 2024 at NIT Warangal.",
+        description: "Team HackEx presenting our vision to the Principal of Malla Reddy College, the pitch was appreciated.",
       },
       {
         image: iith1,
-        description: "Over 500+ coders competed in our flagship event HACKFEST.",
+        description: "Team HackEx participated in the IIT Hyderabad Startup Expo and proudly receiving our certificate from the Organizing Committee (OC)!",
       },
       {
         image: iith2,
-        description: "Featured in Startup India's ‘Top 50 Emerging Startups’.",
+        description: "Proudly displaying our certificate from the IIT Hyderabad Startup Expo!",
       },
       {
         image: mu,
-        description: "Featured in Startup India's ‘Top 50 Emerging Startups’.",
+        description: "Team HackEx celebrates success with our professor, Sonal Hukumpal Singh, whose constant encouragement and support played a key role in shaping our idea at every step!",
       },
     ].map((item, index) => (
       <motion.div
