@@ -13,10 +13,12 @@ import { FiUser, FiTarget } from "react-icons/fi";
 import { HiLightBulb, HiMegaphone } from "react-icons/hi2";
 import { GiCrownedHeart } from "react-icons/gi";
 import { BsRocketTakeoff } from "react-icons/bs";
-import mallareddy from "../assets/mallareddy.jpeg"
-import iith1 from "../assets/iith1.jpeg"
-import iith2 from "../assets/iith2.jpeg"
-import mu from "../assets/mu.jpeg"
+import mallareddy from "../assets/mallareddy.jpeg";
+import iith1 from "../assets/iith1.jpeg";
+import iith2 from "../assets/iith2.jpeg";
+import mu from "../assets/mu.jpeg";
+import pavan from "../assets/pavan.jpeg";
+import alekhya from "../assets/alekhya.jpeg"
 const Home = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -194,16 +196,14 @@ const Home = () => {
       {
         name: "Rangisetti Lakshmi Pavan",
         role: "Founder",
-        icon: <GiCrownedHeart size={28} />,
-        iconBg: "from-yellow-300 to-yellow-500",
-        quote: "Crafting the Vision Behind HackEx and Driving It Forward"
+        quote: "Crafting the Vision Behind HackEx and Driving It Forward",
+        photo: pavan // Add the path to the portrait photo here
       },
       {
         name: "Alekhya Nelabhotla",
         role: "Co-Founder",
-        icon: <BsRocketTakeoff size={24} />,
-        iconBg: "from-pink-400 to-pink-600",
-        quote: "Strategizing Growth and Spotlighting HackEx to the World"
+        quote: "Strategizing Growth and Spotlighting HackEx to the World",
+        photo: alekhya // Add the path to the portrait photo here
       }
     ].map((member, index) => (
       <motion.div
@@ -214,11 +214,9 @@ const Home = () => {
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: index * 0.2 }}
       >
-        {/* Icon */}
-        <div
-          className={`w-14 h-14 mx-auto mt-6 flex items-center justify-center rounded-full text-white shadow-lg bg-gradient-to-br ${member.iconBg}`}
-        >
-          {member.icon}
+        {/* Portrait Photo */}
+        <div className="w-32 h-32 mx-auto mt-6 overflow-hidden rounded-full border-4 border-cyan-300">
+          <img src={member.photo} alt={member.name} className="w-full h-full object-cover" />
         </div>
 
         {/* Member Info */}
@@ -240,6 +238,7 @@ const Home = () => {
     ))}
   </div>
 </section>
+
 
 <section className="py-24 bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white text-center px-6">
 <motion.h2
